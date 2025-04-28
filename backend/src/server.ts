@@ -3,7 +3,7 @@ import 'dotenv/config'
 import config from "./configs/config.mongodb"; 
 
 const server = app.listen(config.app.port, () => {
-  console.log(`Server is running on http://${config.db.host}:${config.app.port}`);
+  console.log(`${config.db.name} is running on http://${config.db.host}:${config.app.port}`);
 });
 
 // Xử lý tín hiệu dừng (Ctrl + C)

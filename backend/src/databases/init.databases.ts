@@ -1,8 +1,6 @@
-
-
 import mongoose from 'mongoose';
 import { countConnect } from '../helpers/check.connect';
-
+import 'dotenv/config'
 const db = process.env.MONGODB_URI || '';
 
 class Database {
