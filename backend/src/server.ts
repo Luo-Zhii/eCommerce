@@ -1,9 +1,9 @@
 import { app } from "./app";
+import 'dotenv/config'
+import config from "./configs/config.mongodb"; 
 
-const PORT: number = 3000;
-
-const server = app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+const server = app.listen(config.app.port, () => {
+  console.log(`Server is running on http://${config.db.host}:${config.app.port}`);
 });
 
 // Xử lý tín hiệu dừng (Ctrl + C)

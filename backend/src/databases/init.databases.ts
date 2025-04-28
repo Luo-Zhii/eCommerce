@@ -3,7 +3,7 @@
 import mongoose from 'mongoose';
 import { countConnect } from '../helpers/check.connect';
 
-const db = 'mongodb+srv://anhduc20053110:Hbja337Ai4nan3NY@clusterjob.sryed.mongodb.net/ecommerce'
+const db = process.env.MONGODB_URI || '';
 
 class Database {
     private static instance: Database;
@@ -18,6 +18,9 @@ class Database {
             mongoose.set('debug', { color: true})
         }
 
+        if (!db) {
+            throw new Error('MONGODB_URI is not defined in the environment variables');
+        }
         mongoose.connect(db)
         .then( _ => console.log('Connect mongodb success!! ', countConnect( )))
         .catch(err => console.log('Error connect!!')
