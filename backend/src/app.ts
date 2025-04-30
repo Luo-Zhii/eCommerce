@@ -5,7 +5,8 @@ import morgan from 'morgan';
 import compression from 'compression'
 import instanceMongodb from './databases/init.databases';
 import { checkConnect } from './helpers/check.connect';
-
+import router from './routes';
+import bodyParser from 'body-parser';
 const app: express.Application = express();
 
 // init middleware
@@ -16,19 +17,15 @@ app.use(helmet());
 app.use(compression())
 
 
+
+
 // init cors
 // init db
 instanceMongodb.connect('mongodb')
-checkConnect()
+// checkConnect()
 
 // init routes
-app.get('/', (req: any, res: any, next: any) => {
-    const str = "Hello world";
-  return res.status(200).json({
-      message: 'Welcome to the API',
-      // metadata: str.repeat(1000)
-  });
-});
+app.use('', router)
 
 // init error handling 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -37,5 +34,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     error: 'Something broke!',
  });
 });
+
+
+
 
 export { app };

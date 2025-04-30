@@ -1,0 +1,14 @@
+// Need install extension:  REST Client
+
+@url_dev = http://localhost:2050/v1/api
+
+# POST Signup
+POST {{url_dev}}/shop/signup
+Content-Type: application/json
+
+{
+  "email": "anhduc3110@gmail.com",
+  "password": "123456",
+  "name": "Shop Duc"
+}
+
