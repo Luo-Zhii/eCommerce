@@ -1,54 +1,101 @@
 import shopModel from "../models/shop.model";
 import { genSaltSync, hashSync } from "bcrypt-ts";
-import { generateKeyPairSync } from 'crypto';
+import * as crypto from "crypto";
 import { IShop } from "../interface/interface";
+import keyTokenService from "./keyToken.service";
+import { createTokenPair } from "../utils/authUtils";
+import { getInfoData } from "../utils";
 
 const RoleShop = {
-    SHOP: 'SHOP',
-    WRITER: 'WRITER',
-    ADMIN: 'ADMIN',
-    EDITOR: 'EDITOR',
-}
+  SHOP: "SHOP",
+  WRITER: "WRITER",
+  ADMIN: "ADMIN",
+  EDITOR: "EDITOR",
+};
 
 class AccessService {
-    
-    async signUp({ name, email, password }: IShop ) {
-        try {
-            // Check if the email already exists
-            const holderShop = await shopModel.find({ email }).lean();
-            if (holderShop) {
-                return {
-                    code: 'xxx',
-                    message: "Email already exists",
-                }
-            }
-            // Hash the password
+  async signUp({ name, email, password }: IShop) {
+    try {
+      // Check if the email already exists
+      const holderShop = await shopModel.findOne({ email }).lean();
+      if (holderShop) {
+        return {
+          code: "xxx",
+          message: "Email already exists",
+        };
+      }
+      // Hash the password
 
-            const salt = genSaltSync(10);
-            
+      const salt = genSaltSync(10);
 
-            const hashedPassword = hashSync(password, salt);
-            const newShop = await shopModel.create({
-                name,
-                email,
-                password: hashedPassword,
-                role: RoleShop.SHOP,
-            });
-            if (newShop) {
-                const {privateKey, publicKey} = generateKeyPairSync('rsa', {
-                    modulusLength: 4096,
-                });
-                console.log({privateKey, publicKey})
-            }
-            return { message: "Shop registered successfully" };
-        } catch (error) {
-            return {
-                code: 'xxx',
-                message: error instanceof Error ? error.message : "An unknown error occurred",
-                
-            }
+      const hashedPassword = hashSync(password, salt);
+      const newShop = await shopModel.create({
+        name,
+        email,
+        password: hashedPassword,
+        roles: RoleShop.SHOP,
+      });
+      if (newShop) {
+        const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
+          modulusLength: 4096,
+          publicKeyEncoding: {
+            type: "pkcs1",
+            format: "pem",
+          },
+          privateKeyEncoding: {
+            type: "pkcs1",
+            format: "pem",
+          },
+        });
+        console.log({ privateKey, publicKey });
+
+        const publicKeyString = await keyTokenService.createKeyToken(
+          newShop._id,
+          publicKey,
+          privateKey
+        );
+
+        if (!publicKeyString) {
+          return {
+            code: "xxx",
+            message: "Failed to create key token",
+          };
         }
+
+        const publicKeyObject = crypto.createPublicKey(publicKeyString);
+
+        // Output token pair
+        const tokens = await createTokenPair(
+          {
+            userId: newShop._id,
+            email,
+          },
+          publicKeyObject,
+          privateKey
+        );
+        console.log("Create token success:", tokens);
+
+        return {
+          code: 201,
+          metadata: getInfoData({
+            fields: ["_id", "name", "email"],
+            object: newShop,
+          }),
+          tokens,
+        };
+      }
+      return {
+        code: 200,
+        metadata: null,
+      };
+    } catch (error) {
+      return {
+        code: "xxx",
+        message:
+          error instanceof Error ? error.message : "An unknown error occurred",
+      };
     }
+  }
 }
 
 const accessService = new AccessService();

@@ -1,41 +1,35 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction } from "express";
 
-import helmet from 'helmet';
-import morgan from 'morgan';
-import compression from 'compression'
-import instanceMongodb from './databases/init.databases';
-import { checkConnect } from './helpers/check.connect';
-import router from './routes';
-import bodyParser from 'body-parser';
+import helmet from "helmet";
+import morgan from "morgan";
+import compression from "compression";
+import instanceMongodb from "./databases/init.databases";
+import { checkConnect } from "./helpers/check.connect";
+import router from "./routes";
+import bodyParser from "body-parser";
 const app: express.Application = express();
 
 // init middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 app.use(helmet());
-app.use(compression())
-
-
-
+app.use(compression());
 
 // init cors
 // init db
-instanceMongodb.connect('mongodb')
+instanceMongodb.connect("mongodb");
 // checkConnect()
 
 // init routes
-app.use('', router)
+app.use("", router);
 
-// init error handling 
+// init error handling
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
-  res.status(500).json({ 
-    error: 'Something broke!',
- });
+  res.status(500).json({
+    error: "Something broke!",
+  });
 });
-
-
-
 
 export { app };
