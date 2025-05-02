@@ -1,14 +1,13 @@
-import express, { Request, NextFunction } from 'express';
-import access from './access';
+import express, { Request, NextFunction } from "express";
+import access from "./access";
+import { apiKey, checkPermission } from "../utils/auth/checkAuth";
 
 const router = express.Router();
 
-router.use('/v1/api', access)
-// router.get('', (req: Request, res: any, next: NextFunction) => {
-//   return res.status(200).json({
-//       message: 'Welcome to the API',
-//   });
-// });
+// middlewere to check if the request is authenticated
+router.use(apiKey);   // check api key
+router.use(checkPermission('0000'));  //check permission
 
-export default router
+router.use("/v1/api", access);
 
+export default router;

@@ -3,7 +3,7 @@ import { genSaltSync, hashSync } from "bcrypt-ts";
 import * as crypto from "crypto";
 import { IShop } from "../interface/interface";
 import keyTokenService from "./keyToken.service";
-import { createTokenPair } from "../utils/authUtils";
+import { createTokenPair } from "../utils/auth/authUtils";
 import { getInfoData } from "../utils";
 
 const RoleShop = {
