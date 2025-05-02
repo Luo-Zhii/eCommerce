@@ -36,33 +36,23 @@ class AccessService {
         roles: RoleShop.SHOP,
       });
       if (newShop) {
-        const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
-          modulusLength: 4096,
-          publicKeyEncoding: {
-            type: "pkcs1",
-            format: "pem",
-          },
-          privateKeyEncoding: {
-            type: "pkcs1",
-            format: "pem",
-          },
-        });
-        console.log({ privateKey, publicKey });
+        const publicKey = crypto.randomBytes(64).toString("hex");
+        const privateKey = crypto.randomBytes(64).toString("hex");
 
-        const publicKeyString = await keyTokenService.createKeyToken(
+        console.log({ publicKey, privateKey });
+
+        const keyStore = await keyTokenService.createKeyToken(
           newShop._id,
           publicKey,
           privateKey
         );
 
-        if (!publicKeyString) {
+        if (!keyStore) {
           return {
             code: "xxx",
             message: "Failed to create key token",
           };
         }
-
-        const publicKeyObject = crypto.createPublicKey(publicKeyString);
 
         // Output token pair
         const tokens = await createTokenPair(
@@ -70,7 +60,7 @@ class AccessService {
             userId: newShop._id,
             email,
           },
-          publicKeyObject,
+          publicKey,
           privateKey
         );
         console.log("Create token success:", tokens);

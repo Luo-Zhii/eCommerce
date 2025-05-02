@@ -15,7 +15,6 @@ class KeyTokenService {
         publicKey: publicKeyString,
         privateKey: privateKeyString,
       });
-      console.log("Key token created successfully:", keyToken);
       return keyToken ? keyToken.publicKey : null;
     } catch (error) {
       return error instanceof Error

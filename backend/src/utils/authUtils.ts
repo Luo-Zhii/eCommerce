@@ -3,34 +3,25 @@ import jwt from "jsonwebtoken";
 
 const createTokenPair = async (
   payload: Object,
-  publicKey: KeyObject,
+  publicKey: string,
   privateKey: string
 ) => {
   try {
-    const accessToken = jwt.sign(payload, privateKey, {
-      algorithm: "RS256",
+    const accessToken = jwt.sign(payload, publicKey, {
       expiresIn: "2 days",
     });
 
     const refreshToken = jwt.sign(payload, privateKey, {
-      algorithm: "RS256",
       expiresIn: "7 days",
     });
 
-    jwt.verify(
-      accessToken,
-      publicKey,
-      {
-        algorithms: ["RS256"],
-      },
-      (err, decoded) => {
-        if (err) {
-          console.error("Verify error:", err);
-        } else {
-          console.log("Decoded payload:", decoded);
-        }
+    jwt.verify(accessToken, publicKey, (err, decoded) => {
+      if (err) {
+        console.error("Verify error:", err);
+      } else {
+        console.log("Decoded payload:", decoded);
       }
-    );
+    });
 
     return { accessToken, refreshToken };
   } catch (error) {
