@@ -5,6 +5,7 @@ import { IShop } from "../interface/interface";
 import keyTokenService from "./keyToken.service";
 import { createTokenPair } from "../utils/auth/authUtils";
 import { getInfoData } from "../utils";
+import { BadRequestError } from "../core/error.response";
 
 const RoleShop = {
   SHOP: "SHOP",
@@ -15,14 +16,11 @@ const RoleShop = {
 
 class AccessService {
   async signUp({ name, email, password }: IShop) {
-    try {
+    // try {
       // Check if the email already exists
       const holderShop = await shopModel.findOne({ email }).lean();
       if (holderShop) {
-        return {
-          code: "xxx",
-          message: "Email already exists",
-        };
+        throw new BadRequestError("Email already exists!!!!");
       }
       // Hash the password
 
@@ -78,13 +76,13 @@ class AccessService {
         code: 200,
         metadata: null,
       };
-    } catch (error) {
-      return {
-        code: "xxx",
-        message:
-          error instanceof Error ? error.message : "An unknown error occurred",
-      };
-    }
+    // } catch (error) {
+    //   return {
+    //     code: "xxx",
+    //     message:
+    //       error instanceof Error ? error.message : "An unknown error occurred",
+    //   };
+    // }
   }
 }
 

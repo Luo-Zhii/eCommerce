@@ -44,7 +44,7 @@ const checkPermission = (permission: string)=> {
       });
       return;
     }
-    console.log((req as any).objKey.permissions);
+    console.log("Permissions::", (req as any).objKey.permissions);
 
     const validPermissions = (req as any).objKey.permissions.includes(
       permission
@@ -58,6 +58,13 @@ const checkPermission = (permission: string)=> {
 
     return next();
   };
+  
+  
 };
+const asyncHandler = (fn: any) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+}
 
-export { apiKey, checkPermission };
+export { apiKey, checkPermission, asyncHandler };
