@@ -1,11 +1,12 @@
 import shopModel from "../models/shop.model";
-import { genSaltSync, hashSync } from "bcrypt-ts";
+import { genSaltSync, hashSync, compareSync } from "bcrypt-ts";
 import * as crypto from "crypto";
 import { IShop } from "../interface/interface";
 import keyTokenService from "./keyToken.service";
 import { createTokenPair } from "../utils/auth/authUtils";
 import { getInfoData } from "../utils";
-import { BadRequestError } from "../core/error.response";
+import { BadRequestError, UnauthorizedError } from "../core/error.response";
+import { findByEmail } from "./shop.service";
 
 const RoleShop = {
   SHOP: "SHOP",
@@ -15,74 +16,128 @@ const RoleShop = {
 };
 
 class AccessService {
-  async signUp({ name, email, password }: IShop) {
-    // try {
-      // Check if the email already exists
-      const holderShop = await shopModel.findOne({ email }).lean();
-      if (holderShop) {
-        throw new BadRequestError("Email already exists!!!!");
-      }
-      // Hash the password
+  /*
+    1 - check email in dbs 
+    2 - match password 
+    3 - create AT & RT and save 
+    4 - gene token 
+    5 - get data and return token 
+  */
 
-      const salt = genSaltSync(10);
-
-      const hashedPassword = hashSync(password, salt);
-      const newShop = await shopModel.create({
-        name,
+  async login({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+    refreshToken: string;
+  }) {
+    // 1 - check email in dbs
+    const foundShop = await findByEmail(email);
+    if (!foundShop) {
+      throw new BadRequestError("Email not found");
+    }
+    // 2 - match password
+    const isMatch = await compareSync(password, foundShop.password);
+    if (!isMatch) {
+      throw new UnauthorizedError("Password is incorrect");
+    }
+    // 3 -  create AT & RT and save
+    const publicKey = crypto.randomBytes(64).toString("hex");
+    const privateKey = crypto.randomBytes(64).toString("hex");
+    // 4 - gene token
+    const tokens = await createTokenPair(
+      {
+        userId: foundShop._id,
         email,
-        password: hashedPassword,
-        roles: RoleShop.SHOP,
-      });
-      if (newShop) {
-        const publicKey = crypto.randomBytes(64).toString("hex");
-        const privateKey = crypto.randomBytes(64).toString("hex");
+      },
+      publicKey,
+      privateKey
+    );
+    const refreshToken =
+      typeof tokens === "string" ? tokens : tokens.refreshToken;
+    if (!refreshToken) {
+      throw new Error("Refresh token is missing");
+    }
+    await keyTokenService.createKeyToken(
+      foundShop._id,
+      publicKey,
+      privateKey,
+      refreshToken
+    );
+    return {
+      metadata: getInfoData({
+        fields: ["_id", "name", "email"],
+        object: foundShop,
+      }),
+      tokens,
+    };
+  }
+  async signUp({ name, email, password }: IShop) {
+    const holderShop = await shopModel.findOne({ email }).lean();
+    if (holderShop) {
+      throw new BadRequestError("Email already exists!!!!");
+    }
+    // Hash the password
 
-        console.log({ publicKey, privateKey });
+    const salt = genSaltSync(10);
 
-        const keyStore = await keyTokenService.createKeyToken(
-          newShop._id,
-          publicKey,
-          privateKey
-        );
+    const hashedPassword = hashSync(password, salt);
+    const newShop = await shopModel.create({
+      name,
+      email,
+      password: hashedPassword,
+      roles: RoleShop.SHOP,
+    });
+    if (newShop) {
+      const publicKey = crypto.randomBytes(64).toString("hex");
+      const privateKey = crypto.randomBytes(64).toString("hex");
 
-        if (!keyStore) {
-          return {
-            code: "xxx",
-            message: "Failed to create key token",
-          };
-        }
+      console.log({ publicKey, privateKey });
 
-        // Output token pair
-        const tokens = await createTokenPair(
-          {
-            userId: newShop._id,
-            email,
-          },
-          publicKey,
-          privateKey
-        );
-        console.log("Create token success:", tokens);
+      // Output token pair
+      const tokens = await createTokenPair(
+        {
+          userId: newShop._id,
+          email,
+        },
+        publicKey,
+        privateKey
+      );
+      console.log("Create token success:", tokens);
+      // Generate a refresh token
+      const refreshToken =
+        typeof tokens === "string" ? tokens : tokens.refreshToken;
+      if (!refreshToken) {
+        throw new Error("Refresh token is missing");
+      }
+      const keyStore = await keyTokenService.createKeyToken(
+        newShop._id,
+        publicKey,
+        privateKey,
+        refreshToken
+      );
 
+      if (!keyStore) {
         return {
-          code: 201,
-          metadata: getInfoData({
-            fields: ["_id", "name", "email"],
-            object: newShop,
-          }),
-          tokens,
+          code: "xxx",
+          message: "Failed to create key token",
         };
       }
+
       return {
-        code: 200,
-        metadata: null,
+        code: 201,
+        metadata: getInfoData({
+          fields: ["_id", "name", "email"],
+          object: newShop,
+        }),
+        tokens,
       };
-    // } catch (error) {
-    //   return {
-    //     code: "xxx",
-    //     message:
-    //       error instanceof Error ? error.message : "An unknown error occurred",
-    //   };
-    // }
+    }
+    return {
+      code: 200,
+      metadata: null,
+    };
   }
 }
 

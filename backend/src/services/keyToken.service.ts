@@ -5,17 +5,24 @@ class KeyTokenService {
   async createKeyToken(
     userId: Types.ObjectId,
     publicKey: string,
-    privateKey: string
+    privateKey: string,
+    refreshToken: string
   ) {
     try {
-      const publicKeyString = publicKey.toString();
-      const privateKeyString = privateKey.toString();
-      const keyToken = await keytokenModel.create({
-        user: userId,
-        publicKey: publicKeyString,
-        privateKey: privateKeyString,
-      });
-      return keyToken ? keyToken.publicKey : null;
+      const filter = { user: userId };
+      const update = {
+        publicKey,
+        privateKey,
+        refreshTokenUsed: [],
+        refreshToken,
+      };
+      const options = { upsert: true, new: true };
+      const token = await keytokenModel.findOneAndUpdate(
+        filter,
+        update,
+        options
+      );
+      return token ? token.publicKey : null;
     } catch (error) {
       return error instanceof Error
         ? error.message

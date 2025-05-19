@@ -1,24 +1,40 @@
-import reasonPhrases from '../constants/reasonPhrases';
-import statusCode from '../constants/statusCodes';
+import reasonPhrases from "../constants/reasonPhrases";
+import statusCode from "../constants/statusCodes";
 
 class ErrorResponse extends Error {
-    public status: number;
+  public status: number;
 
-    constructor(message: string, status: number) {
-        super(message);
-        this.status = status;
-    }
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
 }
 
 class ConflictRequestError extends ErrorResponse {
-    constructor(message: string = reasonPhrases.CONFLICT, status: number = statusCode.CONFLICT) {
-        super(message, status);
-    }
+  constructor(
+    message: string = reasonPhrases.CONFLICT,
+    status: number = statusCode.CONFLICT
+  ) {
+    super(message, status);
+  }
 }
 
 class BadRequestError extends ErrorResponse {
-    constructor( message: string = reasonPhrases.BAD_REQUEST, status: number = statusCode.BAD_REQUEST) {
-        super(message, status);
-    }
+  constructor(
+    message: string = reasonPhrases.BAD_REQUEST,
+    status: number = statusCode.BAD_REQUEST
+  ) {
+    super(message, status);
+  }
 }
-export { ConflictRequestError, BadRequestError }; 
+
+class UnauthorizedError extends ErrorResponse {
+  constructor(
+    message: string = reasonPhrases.UNAUTHORIZED,
+    status: number = statusCode.UNAUTHORIZED
+  ) {
+    super(message, status);
+  }
+}
+
+export { ConflictRequestError, BadRequestError, UnauthorizedError };
