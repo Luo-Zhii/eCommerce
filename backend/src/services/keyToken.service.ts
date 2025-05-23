@@ -29,6 +29,12 @@ class KeyTokenService {
         : "An unknown error occurred";
     }
   }
+  async findUserById(userId: Types.ObjectId) {
+    return await keytokenModel.findOne({ user: userId }).lean();
+  }
+  async removeKeyById(id: Types.ObjectId) {
+    return await keytokenModel.findByIdAndDelete(id);
+  }
 }
 
 const keyTokenService = new KeyTokenService();

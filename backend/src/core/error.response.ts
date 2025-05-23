@@ -37,4 +37,18 @@ class UnauthorizedError extends ErrorResponse {
   }
 }
 
-export { ConflictRequestError, BadRequestError, UnauthorizedError };
+class NotFoundError extends ErrorResponse {
+  constructor(
+    message: string = reasonPhrases.NOT_FOUND,
+    status: number = statusCode.NOT_FOUND
+  ) {
+    super(message, status);
+  }
+}
+
+export {
+  ConflictRequestError,
+  BadRequestError,
+  UnauthorizedError,
+  NotFoundError,
+};

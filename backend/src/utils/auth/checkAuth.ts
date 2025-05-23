@@ -36,7 +36,7 @@ const apiKey = async (
   }
 };
 
-const checkPermission = (permission: string)=> {
+const checkPermission = (permission: string) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!(req as any).objKey.permissions) {
       res.status(401).json({
@@ -58,13 +58,6 @@ const checkPermission = (permission: string)=> {
 
     return next();
   };
-  
-  
 };
-const asyncHandler = (fn: any) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
-}
 
-export { apiKey, checkPermission, asyncHandler };
+export { apiKey, checkPermission };

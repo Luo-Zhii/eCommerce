@@ -23,6 +23,12 @@ class AccessController {
       }
     ).send(res);
   };
+  logout = async (req: Request, res: Response, next: NextFunction) => {
+    new SuccessResponse({
+      message: "Logout success",
+      metadata: await accessService.logout({ keyStore: req.keyStore }),
+    }).send(res);
+  };
 }
 
 const accessController = new AccessController();

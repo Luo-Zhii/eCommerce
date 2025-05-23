@@ -1,5 +1,22 @@
 import { KeyObject } from "crypto";
 import jwt from "jsonwebtoken";
+import asyncHandler from "../../helpers/asyncHandler";
+import { NextFunction, Request, Response } from "express";
+import { NotFoundError, UnauthorizedError } from "../../core/error.response";
+import keyTokenService from "../../services/keyToken.service";
+import { Types } from "mongoose";
+
+declare module "express-serve-static-core" {
+  interface Request {
+    keyStore?: any;
+  }
+}
+
+const HEADER = {
+  API_KEY: "x-api-key",
+  AUTHORIZATION: "authorization",
+  CLIEND_ID: "x-client-id",
+};
 
 const createTokenPair = async (
   payload: Object,
@@ -28,5 +45,41 @@ const createTokenPair = async (
     return error instanceof Error ? error.message : "An unknown error occurred";
   }
 };
+const authentication = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    // 1, Check userId missing
+    const userId = req.headers[HEADER.CLIEND_ID];
+    if (!userId || Array.isArray(userId)) {
+      throw new UnauthorizedError("Invalid request");
+    }
+    // 2. get AccessToken
+    const objectUserId = new Types.ObjectId(userId);
+    const keyStore = await keyTokenService.findUserById(objectUserId);
+    if (!keyStore) {
+      throw new NotFoundError("Key not found");
+    }
+    // 3. verify Token
+    const accessTokenHeader = req.headers[HEADER.AUTHORIZATION];
+    if (!accessTokenHeader) throw new UnauthorizedError("Invalid request");
+    const accessToken = Array.isArray(accessTokenHeader)
+      ? accessTokenHeader[0]
+      : accessTokenHeader;
+    try {
+      const decodedUser = jwt.verify(accessToken, keyStore.publicKey);
+      if (
+        typeof decodedUser === "object" &&
+        decodedUser !== null &&
+        "userId" in decodedUser &&
+        userId !== (decodedUser as jwt.JwtPayload).userId
+      ) {
+        throw new UnauthorizedError("Invalid UserID");
+      }
+      req.keyStore = keyStore;
+      return next();
+    } catch (error) {
+      throw error;
+    }
+  }
+);
 
-export { createTokenPair };
+export { createTokenPair, authentication };

@@ -139,6 +139,11 @@ class AccessService {
       metadata: null,
     };
   }
+  async logout({ keyStore }: any) {
+    const delKey = await keyTokenService.removeKeyById(keyStore._id);
+    console.log("Delete key token:", delKey);
+    return delKey;
+  }
 }
 
 const accessService = new AccessService();
