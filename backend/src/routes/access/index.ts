@@ -17,4 +17,9 @@ router.use(authentication);
 //logout
 router.post("/shop/logout", asyncHandler(accessController.logout));
 
+// detect and handle reused refresh token
+router.post(
+  "/shop/handleRefreshToken",
+  asyncHandler(accessController.handleRefreshToken)
+);
 export default router;
