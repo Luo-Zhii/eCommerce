@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 const DOCUMENT_NAME = "ApiKey";
 const COLLECTION_NAME = "ApiKeys";
-var keyTokenSchema = new mongoose.Schema(
+var apiKeySchema = new mongoose.Schema(
   {
     key: {
       type: String,
@@ -26,4 +26,4 @@ var keyTokenSchema = new mongoose.Schema(
 );
 
 //Export the model
-export default mongoose.model(DOCUMENT_NAME, keyTokenSchema);
+export default mongoose.model(DOCUMENT_NAME, apiKeySchema);
