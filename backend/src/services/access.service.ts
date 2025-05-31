@@ -84,14 +84,7 @@ class AccessService {
     5 - get data and return token 
   */
 
-  async login({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-    refreshToken: string;
-  }) {
+  async login({ email, password }: IShop) {
     // 1 - check email in dbs
     const foundShop = await findByEmail(email);
     if (!foundShop) {

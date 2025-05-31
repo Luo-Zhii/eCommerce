@@ -1,7 +1,14 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 const DOCUMENT_NAME = "Product";
 const COLLECTION_NAME = "Products";
+
+const CLOTHING_NAME = "Clothing";
+const CLOTHING_COLLECTION = "Clothings";
+
+const ELECTRONIC_NAME = "Electronic";
+const ELECTRONIC_COLLECTION = "Electronics";
+
 var productSchema = new mongoose.Schema(
   {
     product_name: {
@@ -44,5 +51,42 @@ var productSchema = new mongoose.Schema(
   }
 );
 
-//Export the model
-export default mongoose.model(DOCUMENT_NAME, productSchema);
+var clothingSchema = new mongoose.Schema(
+  {
+    brand: {
+      type: String,
+      required: true,
+    },
+    size: {
+      type: String,
+    },
+    material: { type: String },
+  },
+  {
+    timestamps: true,
+    collection: CLOTHING_COLLECTION,
+  }
+);
+
+var electronicSchema = new mongoose.Schema(
+  {
+    manufacturer: {
+      type: String,
+      required: true,
+    },
+    model: {
+      type: String,
+    },
+    color: { type: String },
+  },
+  {
+    timestamps: true,
+    collection: ELECTRONIC_COLLECTION,
+  }
+);
+
+const product = model(DOCUMENT_NAME, productSchema);
+const clothing = model(CLOTHING_NAME, clothingSchema);
+const electronic = model(ELECTRONIC_NAME, electronicSchema);
+
+export { product, clothing, electronic };
