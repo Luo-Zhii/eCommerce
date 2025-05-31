@@ -1,4 +1,3 @@
-import { KeyObject } from "crypto";
 import jwt from "jsonwebtoken";
 import asyncHandler from "../../helpers/asyncHandler";
 import { NextFunction, Request, Response } from "express";
@@ -6,16 +5,11 @@ import { NotFoundError, UnauthorizedError } from "../../core/error.response";
 import keyTokenService from "../../services/keyToken.service";
 import { Types } from "mongoose";
 
-declare module "express-serve-static-core" {
-  interface Request {
-    keyStore?: any;
-  }
-}
-
 const HEADER = {
   API_KEY: "x-api-key",
   AUTHORIZATION: "authorization",
   CLIEND_ID: "x-client-id",
+  REFRESH_TOKEN: "x-rtoken-id",
 };
 
 const createTokenPair = async (
@@ -45,6 +39,7 @@ const createTokenPair = async (
     return error instanceof Error ? error.message : "An unknown error occurred";
   }
 };
+
 const authentication = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     // 1, Check userId missing
@@ -52,13 +47,42 @@ const authentication = asyncHandler(
     if (!userId || Array.isArray(userId)) {
       throw new UnauthorizedError("Invalid request");
     }
+
     // 2. get AccessToken
     const objectUserId = new Types.ObjectId(userId);
     const keyStore = await keyTokenService.findUserById(objectUserId);
     if (!keyStore) {
       throw new NotFoundError("Key not found");
     }
+
     // 3. verify Token
+
+    if (req.headers[HEADER.REFRESH_TOKEN]) {
+      const refreshTokenHeader = req.headers[HEADER.REFRESH_TOKEN];
+      if (!refreshTokenHeader) throw new UnauthorizedError("Invalid request");
+
+      const refreshToken = Array.isArray(refreshTokenHeader)
+        ? refreshTokenHeader[0]
+        : refreshTokenHeader;
+      try {
+        const decodedUser = jwt.verify(refreshToken, keyStore.privateKey);
+        if (
+          typeof decodedUser === "object" &&
+          decodedUser !== null &&
+          "userId" in decodedUser &&
+          userId !== (decodedUser as jwt.JwtPayload).userId
+        ) {
+          throw new UnauthorizedError("Invalid UserID");
+        }
+        req.keyStore = keyStore;
+        req.user = decodedUser;
+        req.refreshToken = refreshToken;
+        return next();
+      } catch (error) {
+        throw error;
+      }
+    }
+
     const accessTokenHeader = req.headers[HEADER.AUTHORIZATION];
     if (!accessTokenHeader) throw new UnauthorizedError("Invalid request");
     const accessToken = Array.isArray(accessTokenHeader)
@@ -81,6 +105,7 @@ const authentication = asyncHandler(
     }
   }
 );
+
 const verifyJWT = async (token: string, keySecret: string) => {
   return await jwt.verify(token, keySecret);
 };

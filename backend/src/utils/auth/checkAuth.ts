@@ -44,7 +44,6 @@ const checkPermission = (permission: string) => {
       });
       return;
     }
-    console.log("Permissions::", (req as any).objKey.permissions);
 
     const validPermissions = (req as any).objKey.permissions.includes(
       permission

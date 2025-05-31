@@ -1,7 +1,7 @@
 import shopModel from "../models/shop.model";
 import { genSaltSync, hashSync, compareSync } from "bcrypt-ts";
 import * as crypto from "crypto";
-import { IShop } from "../interface/interface";
+import { IRefreshToken, IShop, ITokenPayload } from "../interface/interface";
 import keyTokenService from "./keyToken.service";
 import { createTokenPair, verifyJWT } from "../utils/auth/authUtils";
 import { getInfoData } from "../utils";
@@ -11,6 +11,8 @@ import {
   UnauthorizedError,
 } from "../core/error.response";
 import { findByEmail } from "./shop.service";
+import { Types } from "mongoose";
+import keytokenModel from "../models/keytoken.model";
 
 const RoleShop = {
   SHOP: "SHOP",
@@ -20,30 +22,17 @@ const RoleShop = {
 };
 
 class AccessService {
-  async handlerRefreshToken(refreshToken: string) {
-    // Check if the refresh token is provided
-    const foundToken = await keyTokenService.findByRefreshTokenUsed(
-      refreshToken
-    );
-    // If the refresh token is found in the used tokens, throw an error
-    if (foundToken) {
-      const payload = await verifyJWT(refreshToken, foundToken.privateKey);
-      const userId = (payload as any).user;
-      const email = (payload as any).email;
-      await keyTokenService.removeKeyByUser((payload as any).userId);
+  async handlerRefreshToken({ keyStore, user, refreshToken }: IRefreshToken) {
+    var { userId, email } = user as unknown as ITokenPayload;
+
+    if (keyStore.refreshTokensUsed.includes(refreshToken)) {
+      await keyTokenService.removeKeyByUser(new Types.ObjectId(userId));
       throw new ForbiddenError("Something wrong happend. Pls rel-login");
     }
 
-    // If the refresh token is not found in the used tokens, proceed to find the key
-    const holderToken = await keyTokenService.findByRefreshToken(refreshToken);
-    if (!holderToken) {
-      throw new UnauthorizedError("Shop not registered or not found");
+    if (keyStore.refreshToken !== refreshToken) {
+      throw new UnauthorizedError("Refresh token is not valid");
     }
-
-    // Verify the refresh token using the private key
-    const payload = await verifyJWT(refreshToken, holderToken.privateKey);
-    const userId = (payload as any).userId;
-    const email = (payload as any).email;
 
     // Find the shop by email
     const foundShop = await findByEmail(email);
@@ -57,12 +46,12 @@ class AccessService {
         userId,
         email,
       },
-      holderToken.publicKey,
-      holderToken.privateKey
+      keyStore.publicKey,
+      keyStore.privateKey
     );
 
     // Ensure tokens is an object with refreshToken property
-    await holderToken.updateOne({
+    await keytokenModel.updateOne({
       $set: {
         refreshToken: (tokens as any).refreshToken,
       },
@@ -155,7 +144,6 @@ class AccessService {
         publicKey,
         privateKey
       );
-      console.log("Create token success:", tokens);
       // Generate a refresh token
       const refreshToken =
         typeof tokens === "string" ? tokens : tokens.refreshToken;

@@ -36,8 +36,13 @@ class AccessController {
   ) => {
     new SuccessResponse({
       message: "Get new token success",
-      metadata: await accessService.handlerRefreshToken(req.body.refreshToken),
+      metadata: await accessService.handlerRefreshToken({
+        keyStore: req.keyStore,
+        user: req.user,
+        refreshToken: req.refreshToken,
+      }),
     }).send(res);
+    console.log(req);
   };
 }
 
