@@ -42,7 +42,6 @@ class AccessController {
         refreshToken: req.refreshToken,
       }),
     }).send(res);
-    console.log(req);
   };
 }
 

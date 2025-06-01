@@ -33,7 +33,7 @@ var productSchema = new mongoose.Schema(
     product_type: {
       type: String,
       required: true,
-      enum: ["Electronics", "Clothing", "Food", "Books", "Other"],
+      enum: ["Electronic", "Clothing", "Food", "Books", "Other"],
     },
     product_shop: {
       type: Schema.Types.ObjectId,
@@ -61,6 +61,11 @@ var clothingSchema = new mongoose.Schema(
       type: String,
     },
     material: { type: String },
+    product_shop: {
+      type: Schema.Types.ObjectId,
+      ref: "Shop",
+      required: true,
+    },
   },
   {
     timestamps: true,
@@ -78,6 +83,11 @@ var electronicSchema = new mongoose.Schema(
       type: String,
     },
     color: { type: String },
+    product_shop: {
+      type: Schema.Types.ObjectId,
+      ref: "Shop",
+      required: true,
+    },
   },
   {
     timestamps: true,

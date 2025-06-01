@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { BadRequestError } from "../core/error.response";
 import { IProduct } from "../interface/interface";
 import { product, clothing, electronic } from "../models/product.model";
@@ -18,19 +19,22 @@ class ProductFactory {
 class Product {
   constructor(public payload: IProduct) {}
 
-  async createProduct() {
-    return await product.create(this.payload);
+  async createProduct(product_id: Types.ObjectId | string) {
+    return await product.create({ ...this.payload, _id: product_id });
   }
 }
 
 class Clothing extends Product {
   async createProduct() {
-    const newClothing = await clothing.create(this.payload.product_attributes);
+    const newClothing = await clothing.create({
+      ...this.payload.product_attributes,
+      product_shop: this.payload.product_shop,
+    });
     if (!newClothing) {
       throw new BadRequestError("Failed to create clothing product");
     }
 
-    const newProduct = await super.createProduct();
+    const newProduct = await super.createProduct(newClothing._id);
     if (!newProduct) {
       throw new BadRequestError("Failed to create product");
     }
@@ -41,13 +45,15 @@ class Clothing extends Product {
 
 class Electronic extends Product {
   async createProduct() {
-    const newElectronic = await electronic.create(
-      this.payload.product_attributes
-    );
+    const newElectronic = await electronic.create({
+      ...this.payload.product_attributes,
+      product_shop: this.payload.product_shop,
+    });
+    console.log("newElectronic", newElectronic);
     if (!newElectronic) {
       throw new BadRequestError("Failed to create electronic product");
     }
-    const newProduct = super.createProduct();
+    const newProduct = super.createProduct(newElectronic._id);
     if (!newProduct) {
       throw new BadRequestError("Failed to create product");
     }
