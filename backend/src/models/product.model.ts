@@ -9,6 +9,9 @@ const CLOTHING_COLLECTION = "Clothings";
 const ELECTRONIC_NAME = "Electronic";
 const ELECTRONIC_COLLECTION = "Electronics";
 
+const FURNITURE_NAME = "Furniture";
+const FURNITURE_COLLECTION = "Furnitures";
+
 var productSchema = new mongoose.Schema(
   {
     product_name: {
@@ -33,7 +36,7 @@ var productSchema = new mongoose.Schema(
     product_type: {
       type: String,
       required: true,
-      enum: ["Electronic", "Clothing", "Food", "Books", "Other"],
+      enum: ["Electronic", "Clothing", "Food", "Books", "Furniture", "Other"],
     },
     product_shop: {
       type: Schema.Types.ObjectId,
@@ -95,8 +98,31 @@ var electronicSchema = new mongoose.Schema(
   }
 );
 
+var furnitureSchema = new mongoose.Schema(
+  {
+    brand: {
+      type: String,
+      required: true,
+    },
+    size: {
+      type: String,
+    },
+    material: { type: String },
+    product_shop: {
+      type: Schema.Types.ObjectId,
+      ref: "Shop",
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+    collection: FURNITURE_COLLECTION,
+  }
+);
+
 const product = model(DOCUMENT_NAME, productSchema);
 const clothing = model(CLOTHING_NAME, clothingSchema);
 const electronic = model(ELECTRONIC_NAME, electronicSchema);
+const furniture = model(FURNITURE_NAME, furnitureSchema);
 
-export { product, clothing, electronic };
+export { product, clothing, electronic, furniture };
