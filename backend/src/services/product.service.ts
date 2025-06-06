@@ -1,12 +1,23 @@
 import { Types } from "mongoose";
 import { BadRequestError } from "../core/error.response";
-import { IProduct } from "../interface/interface";
+import {
+  IGetQueryPartition,
+  IProduct,
+  IShopInfo,
+} from "../interface/interface";
 import {
   product,
   clothing,
   electronic,
   furniture,
 } from "../models/product.model";
+import {
+  findAllDraftForShop,
+  findAllPublishedForShop,
+  publishProductByShop,
+  searchProduct,
+  unPublishProductByShop,
+} from "../models/repos/product.repo";
 
 class ProductFactory {
   private static productRegistry: Record<string, typeof Product> = {};
@@ -23,6 +34,41 @@ class ProductFactory {
     }
     return new productType(payload).createProduct();
   }
+
+  // START: QUERY
+  async findAllDraftForShop({ qs, limit, skip }: IGetQueryPartition) {
+    const query = { ...qs, isDraft: true };
+    return await findAllDraftForShop({ qs: query, limit, skip });
+  }
+
+  async findAllPublishedForShop({ qs, limit, skip }: IGetQueryPartition) {
+    const query = { ...qs, isPublished: true };
+    return await findAllPublishedForShop({ qs: query, limit, skip });
+  }
+  // END: QUERY
+
+  // START: SEARCH
+  async searchProduct({ keySearch }: { keySearch: string }) {
+    return await searchProduct({ keySearch });
+  }
+  // END: SEARCH
+  // START: PUT
+
+  async publishProductByShop({ product_shop, _id }: IShopInfo) {
+    return await publishProductByShop({
+      product_shop,
+      _id,
+    });
+  }
+
+  async unPublishProductByShop({ product_shop, _id }: IShopInfo) {
+    return await unPublishProductByShop({
+      product_shop,
+      _id,
+    });
+  }
+
+  // END: PUT
 }
 
 // define interface class for product attributes

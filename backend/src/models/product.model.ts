@@ -1,4 +1,5 @@
 import mongoose, { Schema, model } from "mongoose";
+import slugify from "slugify";
 
 const DOCUMENT_NAME = "Product";
 const COLLECTION_NAME = "Products";
@@ -25,6 +26,10 @@ var productSchema = new mongoose.Schema(
     product_description: {
       type: String,
     },
+    product_slug: {
+      type: String, // quan-ao-cao-cap
+    },
+
     product_price: {
       type: Number,
       required: true,
@@ -47,12 +52,47 @@ var productSchema = new mongoose.Schema(
       type: Schema.Types.Mixed,
       required: true,
     },
+    product_ratingsAverage: {
+      type: Number,
+      default: 4.5,
+      min: [1, "Rating must be above 1.0"],
+      max: [5, "Rating must be below 5.0"],
+      set: (val: number) => Math.round(val * 10) / 10,
+    },
+    product_variations: {
+      type: Array,
+      default: [],
+    },
+    isDraft: {
+      type: Boolean,
+      default: true,
+      index: true,
+      select: false,
+    },
+    isPublished: {
+      type: Boolean,
+      default: false,
+      index: true,
+      select: false,
+    },
   },
   {
     timestamps: true,
     collection: COLLECTION_NAME,
   }
 );
+
+// Create index for search
+productSchema.index({
+  product_name: "text",
+  product_description: "text",
+});
+
+// Documnent middleware to set product_slug before saving
+productSchema.pre("save", function (next) {
+  this.product_slug = slugify(this.product_name, { lower: true, strict: true });
+  next();
+});
 
 var clothingSchema = new mongoose.Schema(
   {

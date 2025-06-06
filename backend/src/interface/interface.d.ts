@@ -31,3 +31,14 @@ export interface ITokenPayload {
   userId: string;
   email: string;
 }
+
+export interface IGetQueryPartition {
+  qs: Record<string, Object> | any;
+  limit?: number | undefined;
+  skip?: number | undefined;
+}
+
+export interface IShopInfo {
+  product_shop: Object | Types.ObjectId;
+  _id: Types.ObjectId;
+}
