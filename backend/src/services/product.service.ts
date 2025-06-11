@@ -1,7 +1,9 @@
 import { Types } from "mongoose";
 import { BadRequestError } from "../core/error.response";
 import {
+  IGetAllQueryPartitionSelectData,
   IGetQueryPartition,
+  IGetAllQueryPartitionUnSelectData,
   IProduct,
   IShopInfo,
 } from "../interface/interface";
@@ -17,6 +19,8 @@ import {
   publishProductByShop,
   searchProduct,
   unPublishProductByShop,
+  findAllProduct,
+  findProduct,
 } from "../models/repos/product.repo";
 
 class ProductFactory {
@@ -35,7 +39,7 @@ class ProductFactory {
     return new productType(payload).createProduct();
   }
 
-  // START: QUERY
+  // START: Query
   async findAllDraftForShop({ qs, limit, skip }: IGetQueryPartition) {
     const query = { ...qs, isDraft: true };
     return await findAllDraftForShop({ qs: query, limit, skip });
@@ -45,14 +49,35 @@ class ProductFactory {
     const query = { ...qs, isPublished: true };
     return await findAllPublishedForShop({ qs: query, limit, skip });
   }
-  // END: QUERY
 
-  // START: SEARCH
+  // END: Query
+
+  // START: Search
   async searchProduct({ keySearch }: { keySearch: string }) {
     return await searchProduct({ keySearch });
   }
-  // END: SEARCH
-  // START: PUT
+
+  async findAllProduct({
+    limit,
+    sort,
+    page,
+    filter,
+  }: IGetAllQueryPartitionSelectData) {
+    return await findAllProduct({
+      limit,
+      sort,
+      page,
+      filter: { ...filter, isDraft: false, isPublished: true },
+      select: ["product_name", "product_thumb", "product_price"],
+    });
+  }
+
+  async findProduct({ product_id }: IGetAllQueryPartitionUnSelectData) {
+    return await findProduct({ product_id, unSelect: ["__v", "product_slug"] });
+  }
+
+  // END: Search
+  // START: Put
 
   async publishProductByShop({ product_shop, _id }: IShopInfo) {
     return await publishProductByShop({
@@ -68,7 +93,7 @@ class ProductFactory {
     });
   }
 
-  // END: PUT
+  // END: Put
 }
 
 // define interface class for product attributes

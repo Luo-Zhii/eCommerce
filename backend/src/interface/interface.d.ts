@@ -38,6 +38,20 @@ export interface IGetQueryPartition {
   skip?: number | undefined;
 }
 
+export interface IGetAllQueryPartitionSelectData {
+  limit?: number | undefined;
+  sort?: string | undefined;
+  page?: number | undefined;
+  filter?: Array | undefined;
+  select?: Array | undefined;
+  skip?: number | undefined;
+}
+
+export interface IGetAllQueryPartitionUnSelectData {
+  product_id: Types.ObjectId;
+  unSelect?: Array | undefined;
+}
+
 export interface IShopInfo {
   product_shop: Object | Types.ObjectId;
   _id: Types.ObjectId;

@@ -6,6 +6,8 @@ import productController from "../../controllers/product.controller";
 const router = express.Router();
 
 router.get("/search/:keySearch", asyncHandler(productController.searchProduct));
+router.get("", asyncHandler(productController.findAllProduct));
+router.get("/:product_id", asyncHandler(productController.findProduct));
 
 // authentication
 router.use(authentication);

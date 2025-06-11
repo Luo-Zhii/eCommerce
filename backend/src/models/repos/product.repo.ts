@@ -1,8 +1,15 @@
 import { Types } from "mongoose";
 import { product } from "../product.model";
-import { IGetQueryPartition, IShopInfo } from "../../interface/interface";
+import {
+  IGetQueryPartition,
+  IShopInfo,
+  IGetAllQueryPartitionSelectData,
+  IGetAllQueryPartitionUnSelectData,
+} from "../../interface/interface";
 import { BadRequestError } from "../../core/error.response";
+import { getSelectData, unGetSelectData } from "../../utils";
 
+// START: Find
 const findAllDraftForShop = async ({ qs, limit, skip }: IGetQueryPartition) => {
   return queryPartition({ qs, limit, skip });
 };
@@ -14,6 +21,58 @@ const findAllPublishedForShop = async ({
 }: IGetQueryPartition) => {
   return queryPartition({ qs, limit, skip });
 };
+
+const queryPartition = async ({
+  qs,
+  limit = 10,
+  skip = 0,
+}: IGetQueryPartition) => {
+  const query = await product
+    .find(qs)
+    .populate("product_shop", { name: 1, email: 1, _id: 0 })
+    .sort({ updatedAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean()
+    .exec();
+  return query;
+};
+
+const findAllProduct = async ({
+  limit = 50,
+  sort,
+  page,
+  filter,
+  select,
+}: IGetAllQueryPartitionSelectData) => {
+  const skip = page ? (page - 1) * limit : 0;
+
+  const sortBy: { [key: string]: 1 | -1 } =
+    sort === "ctime" ? { createdAt: -1 } : { updatedAt: -1 };
+
+  const result = await product
+    .find(filter || {})
+    .sort(sortBy)
+    .skip(skip)
+    .limit(limit)
+    .select(getSelectData(select))
+    .lean();
+  return result;
+};
+
+const findProduct = async ({
+  product_id,
+  unSelect = [],
+}: IGetAllQueryPartitionUnSelectData) => {
+  const foundProduct = await product
+    .findById(product_id)
+    .select(unGetSelectData(unSelect))
+    .lean();
+  return foundProduct;
+};
+
+// END: Find
+// START: Search
 
 const searchProduct = async ({ keySearch }: { keySearch: string }) => {
   const regexSearch = new RegExp(keySearch);
@@ -30,6 +89,9 @@ const searchProduct = async ({ keySearch }: { keySearch: string }) => {
   return result;
 };
 
+// END: Search
+
+// START: Publish/Unpublish
 const publishProductByShop = async ({ product_shop, _id }: IShopInfo) => {
   const foundShop = await product.findOne({
     product_shop,
@@ -58,21 +120,7 @@ const unPublishProductByShop = async ({ product_shop, _id }: IShopInfo) => {
   return modifiedCount;
 };
 
-const queryPartition = async ({
-  qs,
-  limit = 10,
-  skip = 0,
-}: IGetQueryPartition) => {
-  const query = await product
-    .find(qs)
-    .populate("product_shop", { name: 1, email: 1, _id: 0 })
-    .sort({ updatedAt: -1 })
-    .skip(skip)
-    .limit(limit)
-    .lean()
-    .exec();
-  return query;
-};
+// END: Publish/Unpublish
 
 export {
   findAllDraftForShop,
@@ -80,4 +128,6 @@ export {
   publishProductByShop,
   unPublishProductByShop,
   searchProduct,
+  findAllProduct,
+  findProduct,
 };
