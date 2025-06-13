@@ -21,10 +21,21 @@ interface IKeyStore {
   refreshToken: string;
   refreshTokensUsed: string[];
 }
+
+export interface IFindByEmailParams {
+  email: string;
+  select?: string | string[] | Record<string, any>;
+}
 export interface IRefreshToken {
   keyStore: any;
   user: string;
   refreshToken: string;
+}
+
+export interface IAccessToken {
+  keyStore: any;
+  user: string;
+  accessToken: string;
 }
 
 export interface ITokenPayload {
@@ -54,5 +65,12 @@ export interface IGetAllQueryPartitionUnSelectData {
 
 export interface IShopInfo {
   product_shop: Object | Types.ObjectId;
-  _id: Types.ObjectId;
+  _id?: Types.ObjectId;
+}
+
+export interface IUpdateProduct {
+  productId: any;
+  payload?: any;
+  model?: any;
+  isNew?: boolean;
 }

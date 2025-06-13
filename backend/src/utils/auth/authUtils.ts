@@ -99,6 +99,8 @@ const authentication = asyncHandler(
         throw new UnauthorizedError("Invalid UserID");
       }
       req.keyStore = keyStore;
+      req.user = decodedUser;
+      req.accessToken = accessToken;
       return next();
     } catch (error) {
       throw error;

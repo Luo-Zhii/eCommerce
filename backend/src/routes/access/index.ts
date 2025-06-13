@@ -22,4 +22,5 @@ router.post(
   "/shop/handleRefreshToken",
   asyncHandler(accessController.handleRefreshToken)
 );
+
 export default router;

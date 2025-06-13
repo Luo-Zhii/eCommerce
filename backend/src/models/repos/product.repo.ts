@@ -8,6 +8,7 @@ import {
 } from "../../interface/interface";
 import { BadRequestError } from "../../core/error.response";
 import { getSelectData, unGetSelectData } from "../../utils";
+import { IUpdateProduct } from "../../interface/interface";
 
 // START: Find
 const findAllDraftForShop = async ({ qs, limit, skip }: IGetQueryPartition) => {
@@ -91,6 +92,21 @@ const searchProduct = async ({ keySearch }: { keySearch: string }) => {
 
 // END: Search
 
+// START: Update
+
+const updateProductById = async ({
+  productId,
+  payload,
+  model,
+  isNew = true,
+}: IUpdateProduct) => {
+  const result = await model.findByIdAndUpdate(productId, payload, {
+    new: isNew,
+  });
+  return result;
+};
+// END: Update
+
 // START: Publish/Unpublish
 const publishProductByShop = async ({ product_shop, _id }: IShopInfo) => {
   const foundShop = await product.findOne({
@@ -130,4 +146,5 @@ export {
   searchProduct,
   findAllProduct,
   findProduct,
+  updateProductById,
 };

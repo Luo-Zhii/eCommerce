@@ -6,6 +6,7 @@ import {
   IGetAllQueryPartitionUnSelectData,
   IProduct,
   IShopInfo,
+  IUpdateProduct,
 } from "../interface/interface";
 import {
   product,
@@ -21,7 +22,9 @@ import {
   unPublishProductByShop,
   findAllProduct,
   findProduct,
+  updateProductById,
 } from "../models/repos/product.repo";
+import { removeDataNull, updateNestedData } from "../utils";
 
 class ProductFactory {
   private static productRegistry: Record<string, typeof Product> = {};
@@ -32,7 +35,6 @@ class ProductFactory {
 
   async createProduct(type: string, payload: IProduct) {
     const productType = ProductFactory.productRegistry[type];
-    console.log("productType", productType);
     if (!productType) {
       throw new BadRequestError(`Product type ${type} is not supported`);
     }
@@ -94,6 +96,19 @@ class ProductFactory {
   }
 
   // END: Put
+
+  // START: Update
+
+  async updateProduct(type: string, productId: any, payload: any) {
+    const productType = ProductFactory.productRegistry[type];
+    if (!productType) {
+      throw new BadRequestError(`Product type ${type} is not supported`);
+    }
+
+    return new productType(payload).updateProduct({ productId });
+  }
+
+  // END: Update
 }
 
 // define interface class for product attributes
@@ -102,6 +117,10 @@ class Product {
 
   async createProduct(product_id?: Types.ObjectId | string) {
     return await product.create({ ...this.payload, _id: product_id });
+  }
+
+  async updateProduct({ productId, payload }: IUpdateProduct) {
+    return await updateProductById({ productId, payload, model: product });
   }
 }
 
@@ -122,6 +141,27 @@ class Clothing extends Product {
     }
 
     return newProduct;
+  }
+
+  async updateProduct({ productId }: IUpdateProduct) {
+    // 1. remove attr null or undefined
+    const updatePayload = await removeDataNull(this.payload);
+
+    // 2. check where update?
+    if (updatePayload.product_attributes) {
+      // update child attributes if needed
+      await updateProductById({
+        productId,
+        payload: updatePayload,
+        model: clothing,
+      });
+    }
+
+    // update main product document
+    return await super.updateProduct({
+      productId,
+      payload: updateNestedData(updatePayload),
+    });
   }
 }
 

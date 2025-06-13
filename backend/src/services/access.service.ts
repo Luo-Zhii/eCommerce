@@ -1,7 +1,12 @@
 import shopModel from "../models/shop.model";
 import { genSaltSync, hashSync, compareSync } from "bcrypt-ts";
 import * as crypto from "crypto";
-import { IRefreshToken, IShop, ITokenPayload } from "../interface/interface";
+import {
+  IAccessToken,
+  IRefreshToken,
+  IShop,
+  ITokenPayload,
+} from "../interface/interface";
 import keyTokenService from "./keyToken.service";
 import { createTokenPair, verifyJWT } from "../utils/auth/authUtils";
 import { getInfoData } from "../utils";
@@ -23,7 +28,7 @@ const RoleShop = {
 
 class AccessService {
   async handlerRefreshToken({ keyStore, user, refreshToken }: IRefreshToken) {
-    var { userId, email } = user as unknown as ITokenPayload;
+    const { userId, email } = user as unknown as ITokenPayload;
 
     if (keyStore.refreshTokensUsed.includes(refreshToken)) {
       await keyTokenService.removeKeyByUser(new Types.ObjectId(userId));
@@ -35,7 +40,7 @@ class AccessService {
     }
 
     // Find the shop by email
-    const foundShop = await findByEmail(email);
+    const foundShop = await findByEmail({ email });
     if (!foundShop) {
       throw new UnauthorizedError("Shop not registered or not found");
     }
@@ -60,7 +65,7 @@ class AccessService {
       },
     });
     return {
-      user: { userId, email },
+      user,
       tokens,
     };
   }
@@ -75,7 +80,7 @@ class AccessService {
 
   async login({ email, password }: IShop) {
     // 1 - check email in dbs
-    const foundShop = await findByEmail(email);
+    const foundShop = await findByEmail({ email });
     if (!foundShop) {
       throw new BadRequestError("Email not found");
     }
