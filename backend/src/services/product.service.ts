@@ -25,6 +25,8 @@ import {
   updateProductById,
 } from "../models/repos/product.repo";
 import { removeDataNull, updateNestedData } from "../utils";
+import insertInventory from "../models/repos/inventory.repo";
+import { union } from "lodash";
 
 class ProductFactory {
   private static productRegistry: Record<string, typeof Product> = {};
@@ -116,7 +118,18 @@ class Product {
   constructor(public payload: IProduct) {}
 
   async createProduct(product_id?: Types.ObjectId | string) {
-    return await product.create({ ...this.payload, _id: product_id });
+    const newProduct = await product.create({
+      ...this.payload,
+      _id: product_id,
+    });
+    if (newProduct) {
+      await insertInventory({
+        productId: newProduct._id,
+        shopId: this.payload.product_shop,
+        stock: this.payload.product_quantity,
+      });
+    }
+    return newProduct;
   }
 
   async updateProduct({ productId, payload }: IUpdateProduct) {
