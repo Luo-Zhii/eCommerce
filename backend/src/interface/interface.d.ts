@@ -34,7 +34,7 @@ export interface IShop {
 
 export interface IShopInfo {
   product_shop: Object | Types.ObjectId;
-  _id?: Types.ObjectId;
+  product_id?: Types.ObjectId;
 }
 
 // Product
@@ -71,8 +71,13 @@ export interface IGetAllQueryPartitionSelectData {
 }
 
 export interface IGetAllQueryPartitionUnSelectData {
-  product_id: Types.ObjectId;
+  id?: Types.ObjectId;
   unSelect?: Array | undefined;
+  limit?: number | undefined;
+  sort?: string | undefined;
+  page?: number | undefined;
+  filter?: Array | undefined;
+  skip?: number | undefined;
 }
 
 export interface IUpdateProduct {
@@ -82,11 +87,47 @@ export interface IUpdateProduct {
   isNew?: boolean;
 }
 
-// Invemtory
+// Inventory
 export interface IInventory {
   productId?: string | Types.ObjectId;
   shopId?: string | Types.ObjectId;
   location?: string;
   stock?: Number;
   reservation?: Array;
+}
+
+// Discount
+export interface IDiscount {
+  discount_name: string;
+  discount_description: string;
+  discount_type: "fixed_amount" | "percentage";
+  discount_value: number;
+  discount_code: string;
+  discount_start_date: Date;
+  discount_end_date: Date;
+  discount_max_uses: number;
+  discount_uses_count: number;
+  discount_users_used: string[];
+  discount_max_uses_per_user: number;
+  discount_min_order_value: number;
+  discount_shopId: Types.ObjectId;
+  discount_is_active: boolean;
+  discount_applies_to: "all" | "specific";
+  discount_product_ids: string[];
+}
+
+export interface IUpdateDiscount {
+  discountId: any;
+  payload?: any;
+  isNew?: boolean;
+}
+
+export interface IFindDiscountForProduct {
+  code?: string;
+  codeId?: string;
+  shopId?: Types.ObjectId;
+  userId?: Types.ObjectId;
+  limit?: number;
+  page?: number;
+  products?: any;
 }

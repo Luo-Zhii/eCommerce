@@ -1,4 +1,8 @@
 import pick from "lodash/pick";
+import { Types } from "mongoose";
+
+const convertToObjectIdMongodb = (id: string | Types.ObjectId) =>
+  new Types.ObjectId(id);
 
 const getInfoData = ({
   fields,
@@ -68,6 +72,7 @@ const updateNestedData = (obj: Record<string, any>): Record<string, any> => {
 // END: Remove null
 
 export {
+  convertToObjectIdMongodb,
   getInfoData,
   getSelectData,
   unGetSelectData,

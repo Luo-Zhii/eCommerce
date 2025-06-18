@@ -17,6 +17,7 @@ var discountSchema = new mongoose.Schema(
     // discount_type defined percentage
     discount_type: {
       type: String,
+      enum: ["fixed_amount", "percentage"],
       default: "fixed_amount",
     },
 
@@ -61,13 +62,13 @@ var discountSchema = new mongoose.Schema(
 
     // discount_max_uses_per_user: maxium amount disscount for per user
     discount_max_uses_per_user: {
-      type: String,
+      type: Number,
       required: true,
     },
 
     // discount_min_order_value: value order minium
     discount_min_order_value: {
-      type: String,
+      type: Number,
       required: true,
     },
 

@@ -62,7 +62,7 @@ const findAllProduct = async ({
 };
 
 const findProduct = async ({
-  product_id,
+  id: product_id,
   unSelect = [],
 }: IGetAllQueryPartitionUnSelectData) => {
   const foundProduct = await product
@@ -108,31 +108,55 @@ const updateProductById = async ({
 // END: Update
 
 // START: Publish/Unpublish
-const publishProductByShop = async ({ product_shop, _id }: IShopInfo) => {
+const publishProductByShop = async ({
+  product_shop,
+  product_id,
+}: IShopInfo) => {
   const foundShop = await product.findOne({
     product_shop,
-    _id: _id,
+    _id: product_id,
   });
+
   if (!foundShop) {
     throw new BadRequestError("Product not found for the given shop");
   }
-  foundShop.isDraft = false;
-  foundShop.isPublished = true;
-  const { modifiedCount } = await product.updateOne(foundShop);
+
+  const { modifiedCount } = await product.updateOne(
+    { _id: product_id, product_shop },
+    {
+      $set: {
+        isDraft: false,
+        isPublished: true,
+      },
+    }
+  );
+
   return modifiedCount;
 };
 
-const unPublishProductByShop = async ({ product_shop, _id }: IShopInfo) => {
+const unPublishProductByShop = async ({
+  product_shop,
+  product_id,
+}: IShopInfo) => {
   const foundShop = await product.findOne({
     product_shop,
-    _id: _id,
+    _id: product_id,
   });
+
   if (!foundShop) {
     throw new BadRequestError("Product not found for the given shop");
   }
-  foundShop.isDraft = true;
-  foundShop.isPublished = false;
-  const { modifiedCount } = await product.updateOne(foundShop);
+
+  const { modifiedCount } = await product.updateOne(
+    { _id: product_id, product_shop },
+    {
+      $set: {
+        isDraft: true,
+        isPublished: false,
+      },
+    }
+  );
+
   return modifiedCount;
 };
 

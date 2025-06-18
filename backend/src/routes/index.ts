@@ -1,6 +1,8 @@
 import express, { Request, Response, NextFunction } from "express";
+
 import access from "./access";
 import product from "./product";
+import discount from "./discount";
 
 import { apiKey, checkPermission } from "../utils/auth/checkAuth";
 
@@ -10,6 +12,7 @@ const router = express.Router();
 router.use(apiKey); // check api key
 router.use(checkPermission("0000")); //check permission
 
+router.use("/v1/api/discount", discount);
 router.use("/v1/api/product", product);
 router.use("/v1/api", access);
 

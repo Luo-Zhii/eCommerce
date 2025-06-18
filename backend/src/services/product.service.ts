@@ -24,7 +24,11 @@ import {
   findProduct,
   updateProductById,
 } from "../models/repos/product.repo";
-import { removeDataNull, updateNestedData } from "../utils";
+import {
+  removeDataNull,
+  updateNestedData,
+  convertToObjectIdMongodb,
+} from "../utils";
 import insertInventory from "../models/repos/inventory.repo";
 import { union } from "lodash";
 
@@ -76,24 +80,25 @@ class ProductFactory {
     });
   }
 
-  async findProduct({ product_id }: IGetAllQueryPartitionUnSelectData) {
-    return await findProduct({ product_id, unSelect: ["__v", "product_slug"] });
+  async findProduct({ id }: IGetAllQueryPartitionUnSelectData) {
+    await convertToObjectIdMongodb(id);
+    return await findProduct({ id, unSelect: ["__v", "product_slug"] });
   }
 
   // END: Search
   // START: Put
 
-  async publishProductByShop({ product_shop, _id }: IShopInfo) {
+  async publishProductByShop({ product_shop, product_id }: IShopInfo) {
     return await publishProductByShop({
       product_shop,
-      _id,
+      product_id,
     });
   }
 
-  async unPublishProductByShop({ product_shop, _id }: IShopInfo) {
+  async unPublishProductByShop({ product_shop, product_id }: IShopInfo) {
     return await unPublishProductByShop({
       product_shop,
-      _id,
+      product_id,
     });
   }
 

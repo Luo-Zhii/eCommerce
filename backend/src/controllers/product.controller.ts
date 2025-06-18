@@ -55,7 +55,7 @@ class ProductController {
     new SuccessResponse({
       message: "Search product success!!!",
       metadata: await productService.findProduct({
-        product_id: req.params.product_id,
+        id: req.params.product_id,
       }),
     }).send(res);
   };
@@ -69,7 +69,7 @@ class ProductController {
       message: "Get all published products for shop success!!!",
       metadata: await productService.publishProductByShop({
         product_shop: req.user.userId,
-        _id: req.params.id,
+        product_id: req.params.id,
       }),
     }).send(res);
   };
@@ -83,7 +83,7 @@ class ProductController {
       message: "Get all published products for shop success!!!",
       metadata: await productService.unPublishProductByShop({
         product_shop: req.user.userId,
-        _id: req.params.id,
+        product_id: req.params.id,
       }),
     }).send(res);
   };
