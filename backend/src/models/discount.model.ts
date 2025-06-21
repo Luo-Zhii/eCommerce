@@ -73,7 +73,7 @@ var discountSchema = new mongoose.Schema(
     },
 
     discount_shopId: {
-      type: Types.ObjectId,
+      type: Types.ObjectId || String,
       ref: "Shop",
     },
 

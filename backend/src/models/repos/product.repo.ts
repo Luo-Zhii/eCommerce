@@ -7,7 +7,11 @@ import {
   IGetAllQueryPartitionUnSelectData,
 } from "../../interface/interface";
 import { BadRequestError } from "../../core/error.response";
-import { getSelectData, unGetSelectData } from "../../utils";
+import {
+  convertToObjectIdMongodb,
+  getSelectData,
+  unGetSelectData,
+} from "../../utils";
 import { IUpdateProduct } from "../../interface/interface";
 
 // START: Find
@@ -70,6 +74,12 @@ const findProduct = async ({
     .select(unGetSelectData(unSelect))
     .lean();
   return foundProduct;
+};
+
+const getProductById = async (productId: any) => {
+  return await product
+    .findOne({ _id: convertToObjectIdMongodb(productId) })
+    .lean();
 };
 
 // END: Find
@@ -171,4 +181,5 @@ export {
   findAllProduct,
   findProduct,
   updateProductById,
+  getProductById,
 };

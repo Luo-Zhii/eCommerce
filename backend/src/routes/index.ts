@@ -3,6 +3,7 @@ import express, { Request, Response, NextFunction } from "express";
 import access from "./access";
 import product from "./product";
 import discount from "./discount";
+import cart from "./cart";
 
 import { apiKey, checkPermission } from "../utils/auth/checkAuth";
 
@@ -13,6 +14,7 @@ router.use(apiKey); // check api key
 router.use(checkPermission("0000")); //check permission
 
 router.use("/v1/api/discount", discount);
+router.use("/v1/api/cart", cart);
 router.use("/v1/api/product", product);
 router.use("/v1/api", access);
 

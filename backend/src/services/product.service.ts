@@ -30,7 +30,6 @@ import {
   convertToObjectIdMongodb,
 } from "../utils";
 import insertInventory from "../models/repos/inventory.repo";
-import { union } from "lodash";
 
 class ProductFactory {
   private static productRegistry: Record<string, typeof Product> = {};
@@ -81,7 +80,6 @@ class ProductFactory {
   }
 
   async findProduct({ id }: IGetAllQueryPartitionUnSelectData) {
-    await convertToObjectIdMongodb(id);
     return await findProduct({ id, unSelect: ["__v", "product_slug"] });
   }
 

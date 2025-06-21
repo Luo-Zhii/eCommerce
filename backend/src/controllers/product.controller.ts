@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import accessService from "../services/access.service";
 import { SuccessResponse } from "../core/success.response";
 import { productService } from "../services/product.service";
+import { convertToObjectIdMongodb } from "../utils";
 
 class ProductController {
   createProduct = async (req: Request, res: Response, next: NextFunction) => {
@@ -55,7 +56,7 @@ class ProductController {
     new SuccessResponse({
       message: "Search product success!!!",
       metadata: await productService.findProduct({
-        id: req.params.product_id,
+        id: convertToObjectIdMongodb(req.params.product_id),
       }),
     }).send(res);
   };
@@ -69,7 +70,7 @@ class ProductController {
       message: "Get all published products for shop success!!!",
       metadata: await productService.publishProductByShop({
         product_shop: req.user.userId,
-        product_id: req.params.id,
+        product_id: convertToObjectIdMongodb(req.params.product_id),
       }),
     }).send(res);
   };
@@ -83,7 +84,7 @@ class ProductController {
       message: "Get all published products for shop success!!!",
       metadata: await productService.unPublishProductByShop({
         product_shop: req.user.userId,
-        product_id: req.params.id,
+        product_id: convertToObjectIdMongodb(req.params.product_id),
       }),
     }).send(res);
   };

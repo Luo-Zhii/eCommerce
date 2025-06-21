@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 // Access
 export interface IRefreshToken {
   keyStore: any;
@@ -71,7 +73,7 @@ export interface IGetAllQueryPartitionSelectData {
 }
 
 export interface IGetAllQueryPartitionUnSelectData {
-  id?: Types.ObjectId;
+  id?: any;
   unSelect?: Array | undefined;
   limit?: number | undefined;
   sort?: string | undefined;
@@ -96,6 +98,17 @@ export interface IInventory {
   reservation?: Array;
 }
 
+// Cart
+export interface ICart {
+  userId?: any;
+  product?: any;
+  quantity?: Number;
+  state?: string;
+  cartId?: Types.ObjectId | string;
+  productId?: Types.ObjectId;
+  shop_order_ids?: Array;
+}
+
 // Discount
 export interface IDiscount {
   discount_name: string;
@@ -110,14 +123,14 @@ export interface IDiscount {
   discount_users_used: string[];
   discount_max_uses_per_user: number;
   discount_min_order_value: number;
-  discount_shopId: Types.ObjectId;
+  discount_shopId: Types.ObjectId | string;
   discount_is_active: boolean;
   discount_applies_to: "all" | "specific";
   discount_product_ids: string[];
 }
 
 export interface IUpdateDiscount {
-  discountId: any;
+  discountId?: any;
   payload?: any;
   isNew?: boolean;
 }
@@ -125,8 +138,8 @@ export interface IUpdateDiscount {
 export interface IFindDiscountForProduct {
   code?: string;
   codeId?: string;
-  shopId?: Types.ObjectId;
-  userId?: Types.ObjectId;
+  shopId?: any;
+  userId?: any;
   limit?: number;
   page?: number;
   products?: any;

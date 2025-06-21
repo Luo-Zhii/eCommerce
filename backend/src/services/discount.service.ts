@@ -120,10 +120,10 @@ class DiscountService {
   async updateDiscount(discountId: any, payload: Partial<IUpdateDiscount>) {
     const cleanPayload = removeDataNull(payload);
 
-    const current = await discount.findById(payload.discountId).lean();
+    const current = await discount.findById(discountId).lean();
     if (!current) throw new NotFoundError("Discount not found");
 
-    const mergedData = { ...current, ...cleanPayload };
+    const mergedData: any = { ...current, ...cleanPayload };
     const discountBuilt = buildDiscountFromPayload(mergedData);
 
     return await updateDiscountById({
