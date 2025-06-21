@@ -104,7 +104,7 @@ export interface ICart {
   product?: any;
   quantity?: Number;
   state?: string;
-  cartId?: Types.ObjectId | string;
+  cartId?: Types.ObjectId;
   productId?: Types.ObjectId;
   shop_order_ids?: Array;
 }
@@ -143,4 +143,11 @@ export interface IFindDiscountForProduct {
   limit?: number;
   page?: number;
   products?: any;
+}
+
+// checkout
+export interface ICheckout {
+  cartId?: any;
+  userId?: Types.ObjectId;
+  shop_order_ids?: Array;
 }

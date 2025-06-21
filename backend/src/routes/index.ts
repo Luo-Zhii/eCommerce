@@ -4,6 +4,7 @@ import access from "./access";
 import product from "./product";
 import discount from "./discount";
 import cart from "./cart";
+import checkout from "./checkout";
 
 import { apiKey, checkPermission } from "../utils/auth/checkAuth";
 
@@ -13,6 +14,7 @@ const router = express.Router();
 router.use(apiKey); // check api key
 router.use(checkPermission("0000")); //check permission
 
+router.use("/v1/api/checkout", checkout);
 router.use("/v1/api/discount", discount);
 router.use("/v1/api/cart", cart);
 router.use("/v1/api/product", product);

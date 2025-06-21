@@ -1,5 +1,6 @@
 import { NotFoundError } from "../../core/error.response";
-import { ICart } from "../../interface/interface";
+import { ICart, ICheckout } from "../../interface/interface";
+import { convertToObjectIdMongodb } from "../../utils";
 import cart from "../cart.model";
 import deletedCart from "../deletedCart.model";
 const createUserCart = async ({ userId, product }: ICart) => {
@@ -145,4 +146,19 @@ const removeCart = async ({ userId, product, state = "active" }: ICart) => {
   return updatedCart;
 };
 
-export { createUserCart, updateUserCartQuantity, deleteCart, removeCart };
+const findCartById = async (cartId: ICheckout) => {
+  return await cart
+    .findOne({
+      _id: convertToObjectIdMongodb(cartId as any),
+      cart_state: "active",
+    })
+    .lean();
+};
+
+export {
+  createUserCart,
+  updateUserCartQuantity,
+  deleteCart,
+  removeCart,
+  findCartById,
+};
