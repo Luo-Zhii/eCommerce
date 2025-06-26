@@ -7,6 +7,7 @@ import instanceMongodb from "./databases/init.databases";
 import { checkConnect } from "./helpers/check.connect";
 import router from "./routes";
 import bodyParser from "body-parser";
+import { initRedis } from "./services/redis.service";
 const app: express.Application = express();
 
 // init middleware

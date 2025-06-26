@@ -148,6 +148,22 @@ export interface IFindDiscountForProduct {
 // checkout
 export interface ICheckout {
   cartId?: any;
-  userId?: Types.ObjectId;
+  userId?: Number;
   shop_order_ids?: Array;
+}
+
+// Order
+export interface IOrder {
+  shop_order_ids?: Array;
+  cartId?: any;
+  userId?: Number;
+  user_address?: Object;
+  user_payment?: Object;
+}
+
+// Lock redis
+export interface ILock {
+  cartId?: any;
+  quantity?: Number | undefined;
+  productId?: any;
 }

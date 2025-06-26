@@ -1,17 +1,27 @@
 import { app } from "./app";
 import "dotenv/config";
 import config from "./configs/config.mongodb";
+import { initRedis } from "./services/redis.service";
 
-const server = app.listen(config.app.port, () => {
-  console.log(
-    `${config.db.name} is running on http://${config.db.host}:${config.app.port}`
-  );
-});
+let server: any; // Định nghĩa ở scope bên ngoài để SIGINT truy cập được
+
+(async () => {
+  await initRedis();
+  server = app.listen(config.app.port, () => {
+    console.log(
+      `${config.db.name} is running on http://${config.db.host}:${config.app.port}`
+    );
+  });
+})();
 
 // Xử lý tín hiệu dừng (Ctrl + C)
 process.on("SIGINT", () => {
   console.log("Server is shutting down...");
-  server.close(() => {
+  if (server) {
+    server.close(() => {
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });

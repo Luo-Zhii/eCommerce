@@ -147,12 +147,10 @@ const removeCart = async ({ userId, product, state = "active" }: ICart) => {
 };
 
 const findCartById = async (cartId: ICheckout) => {
-  return await cart
-    .findOne({
-      _id: convertToObjectIdMongodb(cartId as any),
-      cart_state: "active",
-    })
-    .lean();
+  return await cart.findOne({
+    _id: convertToObjectIdMongodb(cartId as any),
+    cart_state: "active",
+  });
 };
 
 export {
