@@ -70,6 +70,7 @@ export interface IGetAllQueryPartitionSelectData {
   filter?: Array | undefined;
   select?: Array | undefined;
   skip?: number | undefined;
+  id?: any;
 }
 
 export interface IGetAllQueryPartitionUnSelectData {
@@ -159,6 +160,16 @@ export interface IOrder {
   userId?: Number;
   user_address?: Object;
   user_payment?: Object;
+}
+
+export interface IGetAllQueryPartitionOrder {
+  limit?: number | undefined;
+  sort?: string | undefined;
+  page?: number | undefined;
+  filter?: Array | undefined;
+  select?: Array | undefined;
+  skip?: number | undefined;
+  userId: Number;
 }
 
 // Lock redis
