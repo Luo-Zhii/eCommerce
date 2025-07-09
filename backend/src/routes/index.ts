@@ -8,8 +8,12 @@ import checkout from "./checkout";
 import inventory from "./inventory";
 
 import { apiKey, checkPermission } from "../utils/auth/checkAuth";
+import pushToLogDiscord from "../middlewares/index";
 
 const router = express.Router();
+
+// add log to discord
+router.use(pushToLogDiscord);
 
 // middlewere to check if the request is authenticated
 router.use(apiKey); // check api key

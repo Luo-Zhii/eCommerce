@@ -1,16 +1,11 @@
-import {
-  Client,
-  GatewayIntentBits,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-} from "discord.js";
+import { Client, GatewayIntentBits, TextChannel } from "discord.js";
 import "dotenv/config";
 
 const discordToken = process.env.DISCORD_TOKEN || "";
 
 class LoggerService {
   private client: Client;
+  private channelId: string | undefined;
 
   constructor() {
     this.client = new Client({
@@ -21,6 +16,8 @@ class LoggerService {
         GatewayIntentBits.MessageContent,
       ],
     });
+
+    this.channelId = process.env.DISCORD_CHANNELID;
     this.client.on("ready", () => {
       if (this.client.user) {
         console.log(`Logged in as ${this.client.user.tag}!`);
@@ -47,6 +44,51 @@ class LoggerService {
         });
       }
     });
+  }
+  sendToFormatCode(logData: any) {
+    const {
+      code,
+      message = "This is a log message",
+      title = "Log Message",
+    } = logData;
+
+    const codeMessage = {
+      content: message,
+      embeds: [
+        {
+          color: parseInt("00ff00", 16),
+          title,
+          description: "```json\n" + JSON.stringify(code, null, 2) + "\n```",
+        },
+      ],
+    };
+
+    this.sendToMessage(codeMessage);
+  }
+
+  sendToMessage(message: any) {
+    if (!this.channelId) {
+      console.error("Discord channel ID is not defined.");
+      return;
+    }
+
+    const channel = this.client.channels.cache.get(this.channelId);
+    const textChannel = channel as TextChannel;
+
+    if (!channel) {
+      console.error("Couldn't find channel!!");
+      return;
+    }
+
+    if (channel.isTextBased()) {
+      try {
+        textChannel.send(message);
+      } catch (err) {
+        console.error("Failed to send message:", err);
+      }
+    } else {
+      console.error("Channel is not text-based. Can't send messages.");
+    }
   }
 }
 const loggerService = new LoggerService();
