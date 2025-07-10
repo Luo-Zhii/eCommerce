@@ -13,7 +13,7 @@ import { getOrderByUser } from "../models/repos/checkout.repo";
 import { checkProductByServer } from "../models/repos/product.repo";
 import { convertToObjectIdMongodb } from "../utils";
 import { discountService } from "./discount.service";
-import { acquireLock, releaseLock } from "./redis.service";
+import { acquireLock, releaseLock } from "./redis/redis.service";
 
 class CheckoutService {
   // FE payload

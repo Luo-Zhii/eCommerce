@@ -178,3 +178,10 @@ export interface ILock {
   quantity?: Number | undefined;
   productId?: any;
 }
+
+// redis
+export interface IRedisPubSub {
+  channel?: string | number;
+  message?: string;
+  callback?: any;
+}

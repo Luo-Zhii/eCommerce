@@ -1,6 +1,6 @@
 import { createClient } from "redis";
-import { BadRequestError } from "../core/error.response";
-import { ILock } from "../interface/interface";
+import { BadRequestError } from "../../core/error.response";
+import { ILock } from "../../interface/interface";
 
 let redisClient: ReturnType<typeof createClient>;
 
@@ -10,6 +10,13 @@ const initRedis = async () => {
   redisClient.on("error", (err) => console.error("Redis Error", err));
 
   await redisClient.connect();
+
+  try {
+    const result = await redisClient.ping();
+    console.log(`Connected to Redis: ${result}`);
+  } catch (err) {
+    console.error("Error connecting to Redis::", err);
+  }
 };
 
 const acquireLock = async ({ productId, cartId, quantity }: ILock) => {

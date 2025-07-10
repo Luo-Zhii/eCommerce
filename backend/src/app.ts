@@ -7,9 +7,27 @@ import instanceMongodb from "./databases/init.databases";
 import { checkConnect } from "./helpers/check.connect";
 import router from "./routes";
 import bodyParser from "body-parser";
-import { initRedis } from "./services/redis.service";
+import { initRedis } from "./services/redis/redis.service";
+import productServiceTest from "./tests/product.test";
+import reidsPubSubService from "./services/redis/redisPubSub.service";
+import inventoryServiceTest from "./tests/inventory.test";
 const app: express.Application = express();
 
+// connect redis
+(async () => {
+  await initRedis();
+})();
+
+// test pub/sub redis
+(async () => {
+  await reidsPubSubService.init();
+  inventoryServiceTest;
+
+  await productServiceTest.purchaseProduct({
+    productId: "product:001",
+    quantity: 10,
+  });
+})();
 // init middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
