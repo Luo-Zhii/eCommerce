@@ -10,7 +10,6 @@ server = app.listen(config.app.port, () => {
   );
 });
 
-// Xử lý tín hiệu dừng (Ctrl + C)
 process.on("SIGINT", () => {
   console.log("Server is shutting down...");
   if (server) {

@@ -185,3 +185,13 @@ export interface IRedisPubSub {
   message?: string;
   callback?: any;
 }
+
+// comments
+export interface IComment {
+  productId?: Types.ObjectId;
+  userId?: Number;
+  content?: String;
+  parentCommentId?: any;
+  limit?: Number;
+  offset?: Number;
+}
