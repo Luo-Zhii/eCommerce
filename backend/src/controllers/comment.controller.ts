@@ -24,6 +24,15 @@ class CommentController {
       }),
     }).send(res);
   };
+
+  deleteComment = async (req: Request, res: Response, next: NextFunction) => {
+    new SuccessResponse({
+      message: "deleteComment success!!!",
+      metadata: await commentService.deleteComment({
+        ...req.body,
+      }),
+    }).send(res);
+  };
 }
 
 const commentController = new CommentController();

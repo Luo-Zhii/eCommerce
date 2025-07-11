@@ -7,4 +7,6 @@ const router = express.Router();
 
 router.post("", asyncHandler(commentController.createComments));
 router.get("", asyncHandler(commentController.getCommentsByParentsId));
+router.delete("", asyncHandler(commentController.deleteComment));
+
 export default router;

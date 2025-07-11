@@ -188,6 +188,7 @@ export interface IRedisPubSub {
 
 // comments
 export interface IComment {
+  commentId?: Types.ObjectId;
   productId?: Types.ObjectId;
   userId?: Number;
   content?: String;

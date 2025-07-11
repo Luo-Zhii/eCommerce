@@ -1,6 +1,7 @@
 import { BadRequestError, NotFoundError } from "../core/error.response";
 import { IComment } from "../interface/interface";
 import Comment from "../models/comment.model";
+import { findProduct } from "../models/repos/product.repo";
 import { convertToObjectIdMongodb } from "../utils";
 
 class CommentService {
@@ -49,7 +50,10 @@ class CommentService {
       );
     } else {
       const maxRightValue = await Comment.findOne(
-        { comment_productId: convertToObjectIdMongodb(productId) },
+        {
+          comment_productId: convertToObjectIdMongodb(productId),
+          isDeleted: false,
+        },
         "comment_right",
         { sort: { comment_right: -1 } }
       );
@@ -85,6 +89,7 @@ class CommentService {
         comment_productId: convertToObjectIdMongodb(productId),
         comment_left: { $gt: parent.comment_left },
         comment_right: { $lt: parent.comment_right },
+        isDeleted: false,
       })
         .select({
           comment_left: 1,
@@ -98,6 +103,7 @@ class CommentService {
     const comments = await Comment.find({
       comment_parentId: null,
       comment_productId: convertToObjectIdMongodb(productId),
+      isDeleted: false,
     })
       .select({
         comment_left: 1,
@@ -107,6 +113,53 @@ class CommentService {
       })
       .sort({ comment_left: 1 });
     return comments;
+  }
+
+  async deleteComment({ commentId, productId }: IComment) {
+    const foundProduct = await findProduct({ id: productId });
+    if (!foundProduct) {
+      throw new NotFoundError("Product not found");
+    }
+    if (!productId) {
+      throw new NotFoundError("productId not found");
+    }
+    // Step 1: define left and right of commentId need delete
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      throw new NotFoundError("comment not found");
+    }
+    const leftValue = comment.comment_left;
+    const rightValue = comment.comment_right;
+
+    // Step 2: calcu width
+    const width = rightValue - leftValue + 1;
+
+    // Step 3: soft delete all sub commentId
+    await Comment.deleteMany({
+      comment_productId: convertToObjectIdMongodb(productId),
+      comment_left: { $gte: leftValue, $lte: rightValue },
+    });
+
+    // Step 4: update left and right of other comment
+    await Comment.updateMany(
+      {
+        comment_productId: convertToObjectIdMongodb(productId),
+        comment_right: { $gt: rightValue },
+      },
+      {
+        $inc: { comment_right: -width },
+      }
+    );
+
+    await Comment.updateMany(
+      {
+        comment_productId: convertToObjectIdMongodb(productId),
+        comment_left: { $gt: rightValue },
+      },
+      {
+        $inc: { comment_left: -width },
+      }
+    );
   }
 }
 
