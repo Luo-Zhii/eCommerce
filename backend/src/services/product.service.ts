@@ -30,6 +30,8 @@ import {
   convertToObjectIdMongodb,
 } from "../utils";
 import insertInventory from "../models/repos/inventory.repo";
+import notificationService from "./notification.service";
+import { INotification } from "../interface/interface";
 
 class ProductFactory {
   private static productRegistry: Record<string, typeof Product> = {};
@@ -131,6 +133,18 @@ class Product {
         shopId: this.payload.product_shop,
         stock: this.payload.product_quantity,
       });
+      notificationService
+        .pushNotificationSystem({
+          type: "SHOP-001",
+          received: 1,
+          sender: new Types.ObjectId(this.payload.product_shop),
+          options: {
+            product_name: this.payload.product_name,
+            shop_name: this.payload.product_shop,
+          },
+        })
+        .then((rs) => console.log(rs))
+        .catch(console.error);
     }
     return newProduct;
   }

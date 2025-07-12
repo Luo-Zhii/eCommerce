@@ -196,3 +196,13 @@ export interface IComment {
   limit?: Number;
   offset?: Number;
 }
+
+// notification
+export interface INotification {
+  type?: String;
+  received?: Number;
+  sender?: Types.ObjectId | undefined;
+  options?: any;
+  userId?: Number;
+  isRead?: boolean;
+}
