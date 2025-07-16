@@ -25,6 +25,7 @@
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.9",
     "@types/lodash": "^4.17.16",
+    "amqplib": "^0.10.8",
     "bcrypt-ts": "^6.0.0",
     "bcrypto": "^5.5.2",
     "compression": "^1.8.0",
