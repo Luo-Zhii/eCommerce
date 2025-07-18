@@ -1,5 +1,6 @@
 const amqplib = require("amqplib/callback_api");
 const queue = "tasks";
+const message = process.argv.slice(2).join(" ") || "something to do";
 
 amqplib.connect("amqp://localhost", (err, conn) => {
   if (err) throw err;
@@ -12,9 +13,14 @@ amqplib.connect("amqp://localhost", (err, conn) => {
       durable: true,
     });
 
-    setInterval(() => {
-      ch1.sendToQueue(queue, Buffer.from("something to do"));
-      console.log("Sent...");
+    ch1.sendToQueue(queue, Buffer.from(message));
+    console.log("Sent...");
+
+    setTimeout(() => {
+      ch1.close(() => {
+        conn.close();
+        process.exit(0);
+      });
     }, 1000);
   });
 });
