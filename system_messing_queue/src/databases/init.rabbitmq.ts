@@ -29,4 +29,26 @@ const connectToRabbitMQForTest = async () => {
   }
 };
 
-export { connectToRabbitMQ, connectToRabbitMQForTest };
+const consumerQueue = async (channel: amqp.Channel, queueName: string) => {
+  try {
+    await channel.assertQueue(queueName, { durable: true });
+    console.log(`Waiting for messages in ${queueName}...`);
+
+    channel.consume(
+      queueName,
+      (msg: amqp.ConsumeMessage | null) => {
+        if (msg) {
+          console.log("msg:::", msg);
+          console.log(
+            `Received message ${queueName}: ${msg.content.toString()}`
+          );
+        }
+      },
+      { noAck: true }
+    );
+  } catch (error) {
+    console.error(`Error consuming from queue ${queueName}:`, error);
+  }
+};
+
+export { connectToRabbitMQ, connectToRabbitMQForTest, consumerQueue };
