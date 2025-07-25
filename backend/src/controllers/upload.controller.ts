@@ -24,6 +24,24 @@ class UploadController {
       }),
     }).send(res);
   };
+
+  uploadImageFromMultiFile = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { files } = req;
+    if (!files) {
+      console.error("File missing");
+      return res.status(400).json({ message: "File missing" });
+    }
+    new SuccessResponse({
+      message: "uploadImageFromMultiFile success!!!",
+      metadata: await uploadService.uploadImageFromMultiFile({
+        files,
+      }),
+    }).send(res);
+  };
 }
 
 const uploadController = new UploadController();

@@ -209,6 +209,7 @@ export interface INotification {
 
 // Upload
 export interface IUpload {
-  path: string;
+  path?: string;
   folderName?: string;
+  files?: any;
 }

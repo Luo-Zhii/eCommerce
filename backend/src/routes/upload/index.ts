@@ -11,5 +11,10 @@ router.post(
   uploadDisk.single("file"),
   asyncHandler(uploadController.uploadFileThumb)
 );
+router.post(
+  "/product/multiple",
+  uploadDisk.array("files", 5),
+  asyncHandler(uploadController.uploadImageFromMultiFile)
+);
 
 export default router;
