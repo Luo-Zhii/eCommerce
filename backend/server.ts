@@ -1,6 +1,6 @@
 import { app } from "./src/app";
 import "dotenv/config";
-import config from "./src/configs/config.mongodb";
+import config from "./src/configs/mongodb.config";
 
 let server: any; // Định nghĩa ở scope bên ngoài để SIGINT truy cập được
 
