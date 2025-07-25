@@ -1,4 +1,5 @@
 import cloudinary from "../configs/cloudinary.config";
+import { IUpload } from "../interface/interface";
 
 class UploadService {
   // Upload an image
@@ -37,6 +38,45 @@ class UploadService {
       width: 500,
       height: 500,
     });
+  }
+
+  async uploadImageFromLocal({ path, folderName = "product/1111" }: IUpload) {
+    try {
+      const result = await cloudinary.uploader
+        .upload(path, {
+          public_id: "thumb",
+          folder: folderName,
+        })
+        .catch((error) => {
+          console.log(error);
+          return undefined;
+        });
+
+      // Optimize delivery by resizing and applying auto-format and auto-quality
+      await cloudinary.url("shoes", {
+        fetch_format: "auto",
+        quality: "auto",
+      });
+
+      return {
+        image_url:
+          result && "secure_url" in result ? result.secure_url : undefined,
+        shopId: 1111,
+        thumb_url: result?.public_id
+          ? await cloudinary.url(result.public_id, {
+              fetch_format: "auto",
+              quality: "auto",
+              crop: "auto",
+              gravity: "auto",
+              width: 500,
+              height: 500,
+              format: "jpg",
+            })
+          : undefined,
+      };
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
 const uploadService = new UploadService();

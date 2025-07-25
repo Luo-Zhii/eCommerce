@@ -206,3 +206,9 @@ export interface INotification {
   userId?: Number;
   isRead?: boolean;
 }
+
+// Upload
+export interface IUpload {
+  path: string;
+  folderName?: string;
+}

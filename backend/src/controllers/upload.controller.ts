@@ -10,6 +10,20 @@ class UploadController {
       metadata: await uploadService.uploadResult(),
     }).send(res);
   };
+
+  uploadFileThumb = async (req: Request, res: Response, next: NextFunction) => {
+    const { file } = req;
+    if (!file) {
+      console.error("File missing");
+      return res.status(400).json({ message: "File missing" });
+    }
+    new SuccessResponse({
+      message: "uploadFileThumb success!!!",
+      metadata: await uploadService.uploadImageFromLocal({
+        path: file.path,
+      }),
+    }).send(res);
+  };
 }
 
 const uploadController = new UploadController();
