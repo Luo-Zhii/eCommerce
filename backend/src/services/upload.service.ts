@@ -1,10 +1,12 @@
 import cloudinary from "../configs/cloudinary.config";
-import { s3, PutObjectCommand } from "../configs/s3.config";
+import { s3, PutObjectCommand, GetObjectCommand } from "../configs/s3.config";
 import { BadRequestError } from "../core/error.response";
 import { IUpload } from "../interface/interface";
 import "dotenv/config";
 import crypto from "crypto";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
+const randomName = () => crypto.randomBytes(16).toString("hex");
 class UploadService {
   // Upload an image to Cloudinary
   async uploadResult() {
@@ -135,18 +137,24 @@ class UploadService {
         throw new BadRequestError("Image file is required for upload.");
       }
 
-      const randomName = () => crypto.randomBytes(16).toString("hex");
-
+      const imageRandom = randomName();
       const command = new PutObjectCommand({
         Bucket: process.env.AWS_BUCKET_NAME,
-        Key: randomName() || "unknown",
+        Key: imageRandom,
         Body: file.buffer,
         ContentType: "image/jpeg",
       });
 
-      const result = s3.send(command);
+      await s3.send(command);
 
-      return result;
+      const signUrl = new GetObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: imageRandom,
+      });
+
+      const url = await getSignedUrl(s3, signUrl, { expiresIn: 3600 });
+
+      return url;
     } catch (error) {
       console.error(error);
     }

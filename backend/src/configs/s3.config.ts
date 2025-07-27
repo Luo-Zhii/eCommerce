@@ -1,4 +1,8 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
 import { BadRequestError } from "../core/error.response";
 import "dotenv/config";
 
@@ -21,4 +25,4 @@ const s3Config = {
 
 const s3 = new S3Client(s3Config);
 
-export { s3, PutObjectCommand };
+export { s3, PutObjectCommand, GetObjectCommand };
