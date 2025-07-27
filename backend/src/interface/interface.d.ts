@@ -212,4 +212,5 @@ export interface IUpload {
   path?: string;
   folderName?: string;
   files?: any;
+  file?: any;
 }

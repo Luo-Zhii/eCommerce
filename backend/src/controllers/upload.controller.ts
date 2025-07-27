@@ -42,6 +42,24 @@ class UploadController {
       }),
     }).send(res);
   };
+
+  uploadImageFromBucketS3 = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { file } = req;
+    if (!file) {
+      console.error("File missing");
+      return res.status(400).json({ message: "File missing" });
+    }
+    new SuccessResponse({
+      message: "uploadImageFromBucketS3 success!!!",
+      metadata: await uploadService.uploadImageFromBucketS3({
+        file,
+      }),
+    }).send(res);
+  };
 }
 
 const uploadController = new UploadController();

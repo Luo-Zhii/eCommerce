@@ -1,9 +1,12 @@
 import cloudinary from "../configs/cloudinary.config";
+import { s3, PutObjectCommand } from "../configs/s3.config";
 import { BadRequestError } from "../core/error.response";
 import { IUpload } from "../interface/interface";
+import "dotenv/config";
+import crypto from "crypto";
 
 class UploadService {
-  // Upload an image
+  // Upload an image to Cloudinary
   async uploadResult() {
     try {
       const urlImage =
@@ -120,6 +123,30 @@ class UploadService {
         });
       }
       return multiFileUpload;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Upload image to AWS
+  async uploadImageFromBucketS3({ file }: IUpload) {
+    try {
+      if (!file) {
+        throw new BadRequestError("Image file is required for upload.");
+      }
+
+      const randomName = () => crypto.randomBytes(16).toString("hex");
+
+      const command = new PutObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: randomName() || "unknown",
+        Body: file.buffer,
+        ContentType: "image/jpeg",
+      });
+
+      const result = s3.send(command);
+
+      return result;
     } catch (error) {
       console.error(error);
     }
