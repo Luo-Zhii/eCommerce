@@ -4,7 +4,8 @@ import { BadRequestError } from "../core/error.response";
 import { IUpload } from "../interface/interface";
 import "dotenv/config";
 import crypto from "crypto";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { getSignedUrl } from "@aws-sdk/cloudfront-signer"; // ESM
+// import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const randomName = () => crypto.randomBytes(16).toString("hex");
 class UploadService {
@@ -145,16 +146,36 @@ class UploadService {
         ContentType: "image/jpeg",
       });
 
-      await s3.send(command);
+      const result = await s3.send(command);
 
-      const signUrl = new GetObjectCommand({
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: imageRandom,
+      // request presigned
+
+      // const signUrl = new GetObjectCommand({
+      //   Bucket: process.env.AWS_BUCKET_NAME,
+      //   Key: imageRandom,
+      // });
+
+      // const url = await getSignedUrl(s3, signUrl, { expiresIn: 3600 });
+
+      // cloudfront signed
+      const cloudfrontDistributionDomain =
+        "https://d2pbpkn1j4xu88.cloudfront.net";
+      const url = `${cloudfrontDistributionDomain}/${imageRandom}`;
+      const privateKey = process.env.AWS_BUCKET_CLOUDFRONT_PRIVATE_KEY_ID || "";
+      const keyPairId = process.env.AWS_CLOUDFRONT_PUBLIC_KEY_ID || "";
+      const dateLessThan = new Date(Date.now() + 1000 * 60);
+
+      const signedUrl = getSignedUrl({
+        url,
+        keyPairId,
+        dateLessThan,
+        privateKey,
       });
 
-      const url = await getSignedUrl(s3, signUrl, { expiresIn: 3600 });
-
-      return url;
+      return {
+        signedUrl,
+        result,
+      };
     } catch (error) {
       console.error(error);
     }
