@@ -26,9 +26,25 @@ jobs:
       - name: Install build-essential
         run: sudo apt-get update && sudo apt-get install -y build-essential
 
-      - name: Copy .env to EC2
+      - name: SSH into EC2 and set environment
         run: |
-          scp -i ~/.ssh/server-shop-ecommerce-key-pair.pem /home/luozhi/Documents/eCommerce/backend/.env ubuntu@ec2-47-129-179-0.ap-southeast-1.compute.amazonaws.com
+          ssh -i ~/.ssh/server-shop-ecommerce-key-pair.pem ubuntu@ec2-47-129-179-0.ap-southeast-1.compute.amazonaws.com << 'EOF'
+            export AWS_BUCKET_ACCESS_KEY="${{ secrets.AWS_BUCKET_ACCESS_KEY }}"
+            export AWS_BUCKET_CLOUDFRONT_PRIVATE_KEY_ID="${{ secrets.AWS_BUCKET_CLOUDFRONT_PRIVATE_KEY_ID }}"
+            export AWS_BUCKET_NAME="${{ secrets.AWS_BUCKET_NAME }}"
+            export AWS_BUCKET_SECRET_ACCESS_KEY="${{ secrets.AWS_BUCKET_SECRET_ACCESS_KEY }}"
+            export AWS_CLOUDFRONT_PUBLIC_KEY_ID="${{ secrets.AWS_CLOUDFRONT_PUBLIC_KEY_ID }}"
+            export CLOUDINARY_API_SECRET="${{ secrets.CLOUDINARY_API_SECRET }}"
+            export DISCORD_CHANNELID="${{ secrets.DISCORD_CHANNELID }}"
+            export DISCORD_TOKEN="${{ secrets.DISCORD_TOKEN }}"
+            export MONGODB_URI="${{ secrets.MONGODB_URI }}"
+            export PORT=3030
+
+            echo "== DEBUG SECRETS =="
+            echo "AWS_BUCKET_ACCESS_KEY=\$AWS_BUCKET_ACCESS_KEY"
+            echo "AWS_BUCKET_NAME=\$AWS_BUCKET_NAME"
+            echo "MONGODB_URI=\$MONGODB_URI"
+          EOF
 
       - name: Install dependencies
         run: npm ci
