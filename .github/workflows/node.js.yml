@@ -46,8 +46,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        run: pm2 restart shop-ecommerce --interpreter ts-node
         working-directory: backend
-
+        
     # - name: Build
     #   run: npm run build --if-present
     #   working-directory: backend
