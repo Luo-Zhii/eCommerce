@@ -37,7 +37,7 @@ jobs:
           echo "DISCORD_CHANNELID=${{ secrets.DISCORD_CHANNELID }}" >> backend/.env
           echo "DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}" >> backend/.env
           echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> backend/.env
-          echo "PORT=${{ vars.PORT }}" >> backend/.env
+          echo "PORT=3030" >> backend/.env
 
       - name: Install dependencies
         run: npm ci
