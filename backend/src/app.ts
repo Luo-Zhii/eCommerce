@@ -13,21 +13,22 @@ import reidsPubSubService from "./services/redis/redisPubSub.service";
 import inventoryServiceTest from "./tests/inventory.test";
 const app: express.Application = express();
 
-// connect redis
-(async () => {
-  await initRedis();
-})();
+// // connect redis
+// (async () => {
+//   await initRedis();
+// })();
 
-// test pub/sub redis
-(async () => {
-  await reidsPubSubService.init();
-  inventoryServiceTest;
+// // test pub/sub redis
+// (async () => {
+//   await reidsPubSubService.init();
+//   inventoryServiceTest;
 
-  await productServiceTest.purchaseProduct({
-    productId: "product:001",
-    quantity: 10,
-  });
-})();
+//   await productServiceTest.purchaseProduct({
+//     productId: "product:001",
+//     quantity: 10,
+//   });
+// })();
+
 // init middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

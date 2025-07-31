@@ -85,13 +85,28 @@ const getProductById = async (productId: any) => {
 // END: Find
 // START: Search
 
+// const searchProduct = async ({ keySearch }: { keySearch: string }) => {
+// const regexSearch = new RegExp(keySearch);
+
+//   const result = await product
+//     .find(
+//       {
+//         isDraft: false,
+//         $text: { $search: regexSearch },
+//       },
+//       { score: { $meta: "textScore" } }
+//     )
+//     .sort({ score: { $meta: "textScore" } })
+//     .lean();
+//   return result;
+// };
+
 const searchProduct = async ({ keySearch }: { keySearch: string }) => {
-  const regexSearch = new RegExp(keySearch);
   const result = await product
     .find(
       {
         isDraft: false,
-        $text: { $search: regexSearch },
+        $text: { $search: keySearch },
       },
       { score: { $meta: "textScore" } }
     )
