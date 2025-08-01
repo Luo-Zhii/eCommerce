@@ -26,7 +26,7 @@ sudo systemctl restart nginx
 2. Add domain to nginx configuration
 
 ```bash
-server_name shopdev.anonystick.com www.shopdev.anonystick.com;
+server_name shop.ecommerce.com www.shop.ecommerce.com;
 
 location / {
     proxy_pass http://localhost:3000;
@@ -35,6 +35,17 @@ location / {
     proxy_set_header Connection 'upgrade';
     proxy_set_header Host $host;
     proxy_cache_bypass $http_upgrade;
+}
+
+location /api/v1/ {
+    proxy_pass http://localhost:2050/;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 }
 ```
 
@@ -45,6 +56,8 @@ sudo add-apt-repository ppa:certbot/certbot
 sudo apt-get update
 sudo apt-get install python3-certbot-nginx
 sudo certbot --nginx -d shopdev.anonystick.com
+
+#  extend while exxpired
 sudo certbot renew --dry-run
 sudo systemctl status certbot.timer
 ```
