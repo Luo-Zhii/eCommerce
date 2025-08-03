@@ -30,13 +30,13 @@ const RoleSchema = new Schema(
           ref: "Resource",
           required: true,
         },
-        actions: {
-          type: String,
+        action: {
+          type: Array,
           required: true,
         },
         attributes: {
-          type: String,
-          default: "*",
+          type: Array,
+          default: ["*"],
         },
       },
     ],

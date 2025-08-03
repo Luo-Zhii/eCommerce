@@ -214,3 +214,34 @@ export interface IUpload {
   files?: any;
   file?: any;
 }
+
+// Resources
+export interface IResource {
+  name: string;
+  slug: string;
+  description: string;
+}
+
+export interface IResourceList {
+  userId: number;
+  limit: number;
+  offset: number;
+  search: string;
+}
+
+// Role
+export interface IRole {
+  name?: string;
+  slug?: string;
+  description?: string;
+  grants?: Array;
+  action?: string;
+  resource?: string;
+}
+
+export interface IRoleList {
+  userId: number;
+  limit: number;
+  offset: number;
+  search: string;
+}
