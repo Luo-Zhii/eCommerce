@@ -245,3 +245,10 @@ export interface IRoleList {
   offset: number;
   search: string;
 }
+
+// Logs
+
+export interface ILogs {
+  message?: string;
+  params?: any;
+}

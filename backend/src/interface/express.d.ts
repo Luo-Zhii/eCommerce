@@ -6,5 +6,14 @@ declare module "express-serve-static-core" {
     user?: any;
     accessToken?: any;
     refreshToken?: any;
+
+    // requestId?: string;
+  }
+}
+declare global {
+  namespace Express {
+    interface Request {
+      requestId?: string;
+    }
   }
 }

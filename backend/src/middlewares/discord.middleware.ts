@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import loggerService from "../logs/discord/discord.log";
+import loggerService from "../logger/discord/discord.log";
 
 const pushToLogDiscord = async (
   req: Request,

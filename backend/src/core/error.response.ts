@@ -1,12 +1,26 @@
 import reasonPhrases from "../constants/reasonPhrases";
 import statusCode from "../constants/statusCodes";
-
+import myloggerLog from "../logger/mylogger.log";
+import logger from "../logger/winston/winston.log";
 class ErrorResponse extends Error {
   public status: number;
+  public now: any;
 
   constructor(message: string, status: number) {
     super(message);
     this.status = status;
+    this.now = new Date().toLocaleString();
+
+    // logger.error(`${this.status}-${this.message}`);
+
+    // myloggerLog.error({
+    //   message: this.message,
+    //   params: [
+    //     { context: "/api/v1/login" },
+    //     // { requestId: "AAABBBB" },
+    //     { error: "Bad request error " },
+    //   ],
+    // });
   }
 }
 

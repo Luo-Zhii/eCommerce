@@ -2,9 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import accessService from "../services/access.service";
 import { CREATED, SuccessResponse } from "../core/success.response";
 import statusCode from "../constants/statusCodes";
+import { BadRequestError } from "../core/error.response";
 
 class AccessController {
   login = async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+    if (!email) throw new BadRequestError("email missing!!");
     new SuccessResponse({
       metadata: await accessService.login(req.body),
     }).send(res);
