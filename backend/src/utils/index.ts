@@ -1,5 +1,6 @@
 import pick from "lodash/pick";
 import { Types } from "mongoose";
+import { ITemplate } from "../interface/interface";
 
 const convertToObjectIdMongodb = (id: string | Types.ObjectId) =>
   new Types.ObjectId(id);
@@ -71,6 +72,17 @@ const updateNestedData = (obj: Record<string, any>): Record<string, any> => {
 
 // END: Remove null
 
+//
+
+const replacePlaceHolder = ({ template, params }: ITemplate) => {
+  Object.keys(params).forEach((k) => {
+    const placeholder = `{{${k}}}`; // {{link_verify}}
+    template = template?.replace(new RegExp(placeholder, "g"), params[k]);
+  });
+
+  return template;
+};
+
 export {
   convertToObjectIdMongodb,
   getInfoData,
@@ -78,4 +90,5 @@ export {
   unGetSelectData,
   removeDataNull,
   updateNestedData,
+  replacePlaceHolder,
 };

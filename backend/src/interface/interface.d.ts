@@ -252,3 +252,31 @@ export interface ILogs {
   message?: string;
   params?: any;
 }
+
+// User
+export interface IUser {
+  email?: string;
+  captcha?: string;
+}
+
+// Otp
+export interface IOtp {
+  email?: string;
+}
+
+// Template
+export interface ITemplate {
+  _id?: any;
+  name?: string;
+  html?: string;
+  template?: string;
+  params?: any;
+}
+
+// Email
+export interface IEmail {
+  html?: string;
+  toEmail?: string;
+  subject?: string;
+  text?: string;
+}

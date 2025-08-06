@@ -10,6 +10,8 @@ import comment from "./comment";
 import notification from "./notification";
 import upload from "./upload";
 import rbac from "./rbac";
+import user from "./user";
+import email from "./email";
 import profile from "./profile";
 import { apiKey, checkPermission } from "../utils/auth/checkAuth";
 import pushToLogDiscord from "../middlewares/discord.middleware";
@@ -23,12 +25,14 @@ router.use(pushToLogDiscord);
 router.use(apiKey); // check api key
 router.use(checkPermission("0000")); //check permission
 
+router.use("/v1/api/checkout", checkout);
+router.use("/v1/api/user", user);
 router.use("/v1/api/rbac", rbac);
+router.use("/v1/api/email", email);
 router.use("/v1/api/profile", profile);
 router.use("/v1/api/upload", upload);
 router.use("/v1/api/notification", notification);
 router.use("/v1/api/comment", comment);
-router.use("/v1/api/checkout", checkout);
 router.use("/v1/api/discount", discount);
 router.use("/v1/api/inventory", inventory);
 router.use("/v1/api/cart", cart);
