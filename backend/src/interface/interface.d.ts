@@ -186,6 +186,11 @@ export interface IRedisPubSub {
   callback?: any;
 }
 
+export interface IRedisConnection {
+  CONNECT_REDIS_TIMEOUT: number;
+  CONNECT_REDIS_MESSAGE: string;
+}
+
 // comments
 export interface IComment {
   commentId?: Types.ObjectId;

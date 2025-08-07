@@ -1,4 +1,4 @@
-import { IDiscount } from "../interface/interface";
+import { IDiscount, IRedisConnection } from "../interface/interface";
 
 export const defaultDiscount: IDiscount = {
   discount_name: "",
@@ -17,4 +17,9 @@ export const defaultDiscount: IDiscount = {
   discount_is_active: true,
   discount_applies_to: "all",
   discount_product_ids: [],
+};
+
+export const RedisConnect: IRedisConnection = {
+  CONNECT_REDIS_TIMEOUT: 0,
+  CONNECT_REDIS_MESSAGE: "Server Redis Error",
 };

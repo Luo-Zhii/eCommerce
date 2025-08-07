@@ -7,18 +7,18 @@ import instanceMongodb from "./databases/init.databases";
 import { checkConnect } from "./helpers/check.connect";
 import router from "./routes";
 import bodyParser from "body-parser";
-import { initRedis } from "./services/redis/redis.service";
 import productServiceTest from "./tests/product.test";
 import reidsPubSubService from "./services/redis/redisPubSub.service";
 import inventoryServiceTest from "./tests/inventory.test";
 const app: express.Application = express();
 import { v4 as uuidv4 } from "uuid";
 import myloggerLog from "./logger/mylogger.log";
+import { initRedis } from "./configs/redis.config";
 
 // // connect redis
-// (async () => {
-//   await initRedis();
-// })();
+(async () => {
+  await initRedis();
+})();
 
 // // test pub/sub redis
 // (async () => {
