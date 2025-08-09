@@ -53,7 +53,7 @@ class EmailService {
       const content = replacePlaceHolder({
         template: foundTemplate.tem_html ?? "",
         params: {
-          link_verify: `http:localhost:3056/cpg/welcome-back?token=${token.otp_token}`,
+          link_verify: `http:localhost:2050/v1/api/user/welcome_user?token=${token.otp_token}`,
         },
       });
 

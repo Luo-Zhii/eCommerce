@@ -6,7 +6,7 @@ class KeyTokenService {
     userId: Types.ObjectId,
     publicKey: string,
     privateKey: string,
-    refreshToken: string
+    refreshToken?: string
   ) {
     try {
       const filter = { user: userId };

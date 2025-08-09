@@ -21,12 +21,12 @@ const router = express.Router();
 // add log to discord
 router.use(pushToLogDiscord);
 
+router.use("/v1/api/user", user);
 // middlewere to check if the request is authenticated
 router.use(apiKey); // check api key
 router.use(checkPermission("0000")); //check permission
 
 router.use("/v1/api/checkout", checkout);
-router.use("/v1/api/user", user);
 router.use("/v1/api/rbac", rbac);
 router.use("/v1/api/email", email);
 router.use("/v1/api/profile", profile);

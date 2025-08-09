@@ -262,11 +262,17 @@ export interface ILogs {
 export interface IUser {
   email?: string;
   captcha?: string;
+  id?: number;
+  name?: string;
+  slug?: string;
+  password?: string;
+  role?: any;
 }
 
 // Otp
 export interface IOtp {
   email?: string;
+  token?: any;
 }
 
 // Template

@@ -1,3 +1,4 @@
+import { BadRequestError } from "../core/error.response";
 import { IOtp } from "../interface/interface";
 import otp from "../models/otp.model";
 import { randomUUID } from "crypto";
@@ -16,6 +17,16 @@ class OtpService {
     });
 
     return newToken;
+  }
+
+  async checkEmailToken({ token }: IOtp) {
+    const tokenOtp = await otp.findOne({ otp_token: token });
+
+    if (!tokenOtp) throw new BadRequestError("token not found");
+
+    otp.deleteOne({ otp_token: token }).then();
+
+    return tokenOtp;
   }
 }
 
