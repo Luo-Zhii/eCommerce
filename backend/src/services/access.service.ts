@@ -112,12 +112,16 @@ class AccessService {
       privateKey,
       refreshToken
     );
+
     return {
-      metadata: getInfoData({
-        fields: ["_id", "name", "email"],
-        object: foundShop,
-      }),
-      tokens,
+      code: 201,
+      metadata: {
+        shop: getInfoData({
+          fields: ["_id", "name", "email"],
+          object: foundShop,
+        }),
+        tokens,
+      },
     };
   }
   async signUp({ name, email, password }: IShop) {
@@ -171,11 +175,13 @@ class AccessService {
 
       return {
         code: 201,
-        metadata: getInfoData({
-          fields: ["_id", "name", "email"],
-          object: newShop,
-        }),
-        tokens,
+        metadata: {
+          shop: getInfoData({
+            fields: ["_id", "name", "email"],
+            object: newShop,
+          }),
+          tokens,
+        },
       };
     }
     return {
