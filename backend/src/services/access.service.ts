@@ -13,6 +13,7 @@ import { getInfoData } from "../utils";
 import {
   BadRequestError,
   ForbiddenError,
+  NotFoundError,
   UnauthorizedError,
 } from "../core/error.response";
 import { findByEmail } from "./shop.service";
@@ -80,12 +81,13 @@ class AccessService {
 
   async login({ email, password }: IShop) {
     // 1 - check email in dbs
+    if (!email) throw new NotFoundError("Email not found");
     const foundShop = await findByEmail({ email });
     if (!foundShop) {
       throw new BadRequestError("Email not found");
     }
     // 2 - match password
-    const isMatch = await compareSync(password, foundShop.password);
+    const isMatch = await compareSync(password ?? "", foundShop.password);
     if (!isMatch) {
       throw new UnauthorizedError("Password is incorrect");
     }
@@ -133,7 +135,7 @@ class AccessService {
 
     const salt = genSaltSync(10);
 
-    const hashedPassword = hashSync(password, salt);
+    const hashedPassword = hashSync(password ?? "", salt);
     const newShop = await shopModel.create({
       name,
       email,

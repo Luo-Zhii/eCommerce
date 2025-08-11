@@ -1,6 +1,7 @@
 import pick from "lodash/pick";
 import { Types } from "mongoose";
 import { ITemplate } from "../interface/interface";
+import _ from "lodash";
 
 const convertToObjectIdMongodb = (id: string | Types.ObjectId) =>
   new Types.ObjectId(id);
@@ -83,6 +84,10 @@ const replacePlaceHolder = ({ template, params }: ITemplate) => {
   return template;
 };
 
+const randonIdProduct = () => {
+  return Math.floor(Math.random() * 987654321 + 100000);
+};
+
 export {
   convertToObjectIdMongodb,
   getInfoData,
@@ -91,4 +96,5 @@ export {
   removeDataNull,
   updateNestedData,
   replacePlaceHolder,
+  randonIdProduct,
 };

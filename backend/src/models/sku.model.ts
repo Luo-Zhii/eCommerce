@@ -1,9 +1,9 @@
 import mongoose, { Schema, model } from "mongoose";
 
-const DOCUMENT_NAME = "Spu";
-const COLLECTION_NAME = "Spus";
+const DOCUMENT_NAME = "Sku";
+const COLLECTION_NAME = "Skus";
 
-var spuSchema = new mongoose.Schema(
+var skuSchema = new mongoose.Schema(
   {
     sku_id: {
       type: String,
@@ -43,9 +43,8 @@ var spuSchema = new mongoose.Schema(
       default: 0,
     },
     product_id: {
-      type: Schema.Types.ObjectId,
-      ref: "Spu",
-      require: true,
+      type: String,
+      default: "",
     },
 
     isDraft: {
@@ -73,6 +72,6 @@ var spuSchema = new mongoose.Schema(
   }
 );
 
-const spu = model(DOCUMENT_NAME, spuSchema);
+const sku = model(DOCUMENT_NAME, skuSchema);
 
-export { spu };
+export { sku };

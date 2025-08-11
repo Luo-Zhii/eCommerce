@@ -29,9 +29,11 @@ export interface IKeyStore {
 // Shop
 
 export interface IShop {
-  name: string;
-  email: string;
-  password: string;
+  name?: string;
+  email?: string;
+  password?: string;
+  shop_id?: any;
+  select?: any;
 }
 
 export interface IShopInfo {
@@ -290,4 +292,28 @@ export interface IEmail {
   toEmail?: string;
   subject?: string;
   text?: string;
+}
+
+// Spu
+export interface ISpu {
+  product_id?: any;
+  product_name?: string;
+  product_thumb?: string;
+  product_description?: string;
+  product_price?: number;
+  product_category?: Array;
+  product_shop?: string;
+  product_attributes?: any;
+  product_quantity?: number;
+  product_variations?: Array;
+  sku_list?: any[];
+  spu_id?: any;
+}
+
+// Sku
+export interface ISku {
+  spu_id?: any;
+  sku_list?: any;
+  sku_id?: any;
+  product_id?: string;
 }
