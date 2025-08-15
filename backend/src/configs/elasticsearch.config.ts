@@ -15,7 +15,8 @@ const instanceEventListeners = async (elasticClient: any) => {
 };
 const initElasticsearch = async ({
   ELASTICSEARCH_IS_ENABLED,
-  ELASTICSEARCH_NODE = process.env.ELASTICSEARCH_HOST,
+  ELASTICSEARCH_NODE = process.env.ELASTICSEARCH_HOST ||
+    "http://localhost:9200",
 }: IElacticsearch) => {
   if (ELASTICSEARCH_IS_ENABLED) {
     elasticClient = new Client({
@@ -26,6 +27,7 @@ const initElasticsearch = async ({
     });
     await instanceEventListeners(elasticClient);
   }
+  console.log("ELASTICSEARCH_NODE", ELASTICSEARCH_NODE);
 };
 
 const getElasticsearch = (): Client | null => elasticClient;

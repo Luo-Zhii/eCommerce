@@ -322,4 +322,8 @@ export interface ISku {
 export interface IElacticsearch {
   ELASTICSEARCH_IS_ENABLED?: any;
   ELASTICSEARCH_NODE?: any;
+  idxName?: any;
+  docType?: any;
+  payload?: any;
+  id?: any;
 }
