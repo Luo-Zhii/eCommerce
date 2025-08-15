@@ -38,6 +38,12 @@ app.use(morgan("dev"));
 app.use(helmet());
 app.use(compression());
 
+// init elasticsearch
+import { initElasticsearch } from "./configs/elasticsearch.config";
+initElasticsearch({
+  ELASTICSEARCH_IS_ENABLED: true,
+});
+
 app.use((req: Request, res: Response, next: NextFunction) => {
   const headerRequestId = req.headers["x-requestid"];
   // const requestId = Array.isArray(requestIdHeader) ? requestIdHeader[0] :requestIdHeader;
