@@ -10,9 +10,9 @@ const access: PoolOptions = {
 
 const conn = mysql.createPool(access);
 
-const batchSize = 100000;
+const batchSize = 173892;
 
-const totalSize = 1000000;
+const totalSize = 1738920;
 
 let currentId = 1;
 let values: any[] = [];
@@ -20,6 +20,7 @@ let values: any[] = [];
 console.time("--------Insert Batch Time--------");
 const insertBatch = async () => {
   for (let i = 0; i < batchSize && currentId <= totalSize; i++) {
+    const id = currentId;
     const name = `name${currentId}`;
     const age = Math.floor(Math.random() * 100);
     const address = `address${currentId}`;
@@ -38,8 +39,8 @@ const insertBatch = async () => {
     });
     return;
   }
-
-  const sql = "INSERT INTO test_table(id, name, age, address) VALUES ?";
+  // without json
+  const sql = "INSERT INTO test_without_json(id, name, age, address) VALUES ?";
 
   conn.query(sql, [values], (err, result: mysql.ResultSetHeader) => {
     if (err) {
@@ -50,6 +51,23 @@ const insertBatch = async () => {
       insertBatch();
     }
   });
+
+  // json
+  //   const sql = "INSERT INTO test_json(content) VALUES ?";
+
+  //   const jsonValues = values.map(([id, name, age, address]) => [
+  //     JSON.stringify({ id, name, age, address }),
+  //   ]);
+
+  //   conn.query(sql, [jsonValues], (err, result: mysql.ResultSetHeader) => {
+  //     if (err) {
+  //       console.error("Error inserting batch:", err);
+  //     } else {
+  //       console.log(`Inserted ${result.affectedRows} rows`);
+  //       values = [];
+  //       insertBatch();
+  //     }
+  //   });
 };
 
 insertBatch().catch((err) => {
